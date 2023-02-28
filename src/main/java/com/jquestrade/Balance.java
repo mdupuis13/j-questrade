@@ -30,7 +30,7 @@ public class Balance {
 		return cash;
 	}
 	
-	/** Returns the market value of all securities in the account <b>in this balance's currency.
+	/** Returns the market value of all securities in the account in this balance's currency.
 	 * @return The market value of all securities in the account in this balance's currency.
 	 */
 	public double getMarketValue() {

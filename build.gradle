@@ -7,22 +7,19 @@
  */
 
 // Apply the java-library plugin to add support for Java Library
-apply plugin: 'java-library'
+plugins {
+   id 'java-library'
+}
+
+sourceCompatibility = 17
+targetCompatibility = 17
 
 // In this section you declare where to find the dependencies of your project
 repositories {
-    jcenter()
+    mavenCentral() 
 }
 
 dependencies {
 	implementation 'com.google.code.gson:gson:2.8.6'
 }
 
-task javadocJar(type: Jar) {
-    classifier = 'javadoc'
-    from javadoc
-}   
-
-artifacts {
-    archives javadocJar
-}
