@@ -15,14 +15,13 @@ public class SymbolInfo {
 	private double eps;
 	private double pe;
 	private double dividend;
-	private double yield;
+	private double symbolYield;
 	private String exDate;
 	private long marketCap;
 	private int tradeUnit;
 	private String optionType;
 	private String optionDurationType;
 	private String optionRoot;
-	private Object optionContractDeliverables;
 	private String optionExerciseType;
 	private String listingExchange;
 	private String description;
@@ -41,7 +40,7 @@ public class SymbolInfo {
 		private MinTick() {}
 		
 		private double pivot;
-		private double minTick;
+		private double minPriceIncrement;
 		
 		/** Returns the beginning of the interval for a given minimum price increment.
 		 * @return The pivot.
@@ -54,7 +53,7 @@ public class SymbolInfo {
 		 * @return The min Tick.
 		 */
 		public double getMinTick() {
-			return minTick;
+			return minPriceIncrement;
 		}
 	}
 	
@@ -192,7 +191,7 @@ public class SymbolInfo {
 	 * @return The dividend yield (dividend / prevDayClosePrice).
 	 */
 	public double getYield() {
-		return yield;
+		return symbolYield;
 	}
 
 	/** Returns the dividend ex-date.
@@ -241,14 +240,6 @@ public class SymbolInfo {
 	 */
 	public String getOptionRoot() {
 		return optionRoot;
-	}
-
-	/** Returns the option contract deliverables. Unimplemented.
-	 * @return the optionContractDeliverables
-	 */
-	@Deprecated
-	public Object getOptionContractDeliverables() {
-		return optionContractDeliverables;
 	}
 
 	/** Returns the option exercise style (e.g., "American").

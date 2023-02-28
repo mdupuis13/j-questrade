@@ -9,7 +9,7 @@ package com.jquestrade;
 public class Symbol {
 	private Symbol() {}
 	
-	private String symbol;
+	private String theSymbol;
 	private int symbolId;
 	private String description;
 	private String securityType;
@@ -22,7 +22,7 @@ public class Symbol {
 	 * @return The stock symbol/ticker.
 	 */
 	public String getSymbol() {
-		return symbol;
+		return theSymbol;
 	}
 	
 	/** Returns the internal unique symbol identifier.
@@ -59,15 +59,15 @@ public class Symbol {
 		return listingExchange;
 	}
 	
-	/** Returns whether a symbol is tradable on the platform.
-	 * @return Whether a symbol is tradable on the platform.
+	/** Returns whether a theSymbol is tradable on the platform.
+	 * @return Whether a theSymbol is tradable on the platform.
 	 */
 	public boolean isTradable() {
 		return isTradable;
 	}
 	
-	/** Returns whether a symbol has live market data.
-	 * @return Whether a symbol has live market data.
+	/** Returns whether a theSymbol has live market data.
+	 * @return Whether a theSymbol has live market data.
 	 */
 	public boolean isQuotable() {
 		return isQuotable;
@@ -78,6 +78,5 @@ public class Symbol {
 	public String getCurrency() {
 		return currency;
 	}
-	
 	
 }
