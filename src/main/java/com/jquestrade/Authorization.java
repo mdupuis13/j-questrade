@@ -4,14 +4,14 @@ package com.jquestrade;
 public class Authorization {
 	
 	/** Creates a Authorization object using cached data. */
-	Authorization(String refreshToken, String accessToken, String apiServer) {
+	public Authorization(String refreshToken, String accessToken, String apiServer) {
 		this.refresh_token = refreshToken;
 		this.access_token = accessToken;
 		this.api_server = apiServer;
 		this.expires_in = 1800; // I've always seen it 1800 seconds
 		this.token_type = "Bearer"; // Access token type is always Bearer
 	}
-	
+
 	private String access_token;
 	private String api_server;
 	private int expires_in;

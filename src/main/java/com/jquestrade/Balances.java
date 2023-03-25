@@ -8,7 +8,7 @@ package com.jquestrade;
  */
 public class Balances {
 	
-	private Balances() {}
+	public Balances() {}
 	
 	/** Represents a currency. */
 	public enum Currency { 

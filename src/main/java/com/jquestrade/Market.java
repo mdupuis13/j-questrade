@@ -6,7 +6,7 @@ package com.jquestrade;
  */
 public class Market {
 	
-	private Market() {}
+	public Market() {}
 	
 	private String name;
 	private String[] tradingVenues;

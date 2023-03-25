@@ -7,7 +7,7 @@ package com.jquestrade;
  * for more insight.
  */
 public class Candle {
-	private Candle() {}
+	public Candle() {}
 	
 	private String start;
 	private String end;

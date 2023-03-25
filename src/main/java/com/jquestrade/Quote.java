@@ -9,7 +9,7 @@ package com.jquestrade;
  * The symbol quote documentation</a>
  */
 public class Quote {
-	private Quote() {}
+	public Quote() {}
 	
 	private String symbol;
 	private long symbolId;

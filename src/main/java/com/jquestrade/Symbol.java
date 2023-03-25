@@ -1,13 +1,13 @@
 package com.jquestrade;
 
 /** Represents a symbol/ticker. For more information on the ticker, use
- * {@link Questrade#getSymbolInfo(int, int...)} to get a {@link SymbolInfo},
+ * {@link Questrade#getSymbol(int, int...)} to get a {@link SymbolInfo},
  * which is this class + more info.
  * @see <a href="https://www.questrade.com/api/documentation/rest-operations/market-calls/symbols-search">
  * The symbol search documentation</a>
  */
 public class Symbol {
-	private Symbol() {}
+	public Symbol() {}
 	
 	private String theSymbol;
 	private int symbolId;

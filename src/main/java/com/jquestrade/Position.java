@@ -95,13 +95,13 @@ public class Position {
 	public double getTotalCost() {
 		return totalCost;
 	}
-	/** Returns whether or not real-time quote was used to compute the profit-and-losses.
+	/** Returns whether real-time quote was used to compute the profit-and-losses.
 	 * @return Whether real-time quote was used to compute the profit-and-losses.
 	 */
 	public boolean isRealTime() {
 		return isRealTime;
 	}
-	/** Whether or not the symbol is currently undergoing a reorg.
+	/** Whether the symbol is currently undergoing a reorg.
 	 * @return Whether the symbol is currently undergoing a reorg.
 	 */
 	public boolean isUnderReorg() {

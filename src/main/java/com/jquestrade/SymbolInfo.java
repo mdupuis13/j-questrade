@@ -2,7 +2,7 @@ package com.jquestrade;
 
 /** Represents information about a symbol/ticker */
 public class SymbolInfo {
-	private SymbolInfo() {}
+	public SymbolInfo() {}
 	
 	private String symbol;
 	private int symbolId;

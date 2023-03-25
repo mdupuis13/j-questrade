@@ -6,7 +6,7 @@ package com.jquestrade;
  */
 public class Execution {
 	
-	private Execution() {}
+	public Execution() {}
 	
 	private String symbol;
 	private int symbolId;
