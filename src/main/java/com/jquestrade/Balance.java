@@ -3,7 +3,7 @@ package com.jquestrade;
 /** Represents a per-currency or combined balances for a specified account. */
 public class Balance {
 	
-	private Balance() {}
+	public Balance() {}
 	
 	private String currency;
 	private double cash;

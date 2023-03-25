@@ -5,7 +5,7 @@ package com.jquestrade;
  * The order properties documentation</a>
  */
 public class Order {
-	private Order() {}
+	public Order() {}
 	
 	/** The state of an order. */
 	public enum OrderState {
