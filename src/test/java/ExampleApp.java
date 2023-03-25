@@ -36,7 +36,7 @@ class ExampleApp {
 		scan.close();
 
 		// Set it so the Authorization is sent to our custom method every time it's updated.
-		q.setAuthRelay(auth -> saveAuthorization(auth));
+		q.setAuthRelay(ExampleApp::saveAuthorization);
 		
 		try {
 			q.activate();
