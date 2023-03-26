@@ -28,7 +28,7 @@ class ExampleApp {
 		}
 		
 		// Use the first line auth.txt as the refresh token
-		Questrade q = new Questrade(
+		Questrade q = new QuestradeImpl(
 				scan.nextLine(), // refresh token
 				scan.nextLine(), // access token
 				scan.nextLine()  // API server
@@ -39,13 +39,13 @@ class ExampleApp {
 		q.setAuthRelay(ExampleApp::saveAuthorization);
 		
 		try {
-			q.activate();
+			q.activate(q.getAuthorization().getRefresh_token());
 	    	
 			// Test that something is retrieved properly from the Questrade servers.
 			System.out.println(q.getTime());
 		    
 			// Print out the total amount of CAD in the given account
-			System.out.println(q.getBalances(q.getAccounts()[0].getNumber()).getPerCurrencyBalances(Currency.CAD).getTotalEquity());
+			System.out.println(q.getBalances(q.getAccounts()[0].number()).getPerCurrencyBalances(Currency.CAD).getTotalEquity());
 			
 			// Make other requests to the Questrade API here . . .
 	    	
@@ -61,9 +61,9 @@ class ExampleApp {
 		try {
 			// Print the refresh token, access token, and API server to auth.txt
 			PrintWriter out = new PrintWriter(AUTH_FILE);
-			out.println(auth.getRefreshToken()); 
-			out.println(auth.getAccessToken());
-			out.println(auth.getApiServer());	
+			out.println(auth.getRefresh_token());
+			out.println(auth.getAccess_token());
+			out.println(auth.getApi_server());
 			out.close();
 		} catch (FileNotFoundException e) {
 			System.err.println("File could not be found");
