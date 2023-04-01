@@ -6,110 +6,106 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/** Represents an HTTPS request. */
+/**
+ * Represents an HTTPS request.
+ */
 class Request {
-	
-	/** Request methods for the HTTP request */
-	enum RequestMethod {
-		GET, 
-		POST;
-	}
-	
-	@Setter
-	private String accessToken;
 
-	private int parameterCount = 0;
-	
-	@Setter
-	private RequestMethod requestMethod = RequestMethod.GET;
-	
-	private String path;
+    @Setter
+    private String accessToken;
+    private int parameterCount = 0;
+    @Setter
+    private RequestMethod requestMethod = RequestMethod.GET;
+    private String path;
+    @Setter
+    private String contentType;
+    @Setter
+    private String apiServer;
 
-	@Setter
-	private String contentType;
-	
-	@Setter
-	private String apiServer;
-	
-
-	Request(String path) {
+    Request(String path) {
         this.path = path;
-	}
+    }
 
-	void addParameter(String key, String[] values) {
-		path += ((parameterCount == 0) ? "?" : "&")
-			+ key + "=" + values[0];
-		
-		for(int i = 1; i < values.length; i++) {
-			path += "," + values[i];
-		}
-		
-		parameterCount++;
-	}
-	
-	void addParameter(String key, int[] values) {
-		path += ((parameterCount == 0) ? "?" : "&")
-			+ key + "=" + values[0];
-		
-		for(int i = 1; i < values.length; i++) {
-			path += "," + values[i];
-		}
-		
-		parameterCount++;
-	}
-	
-	void addParameter(String key, String value, String ...values) {
-		path += ((parameterCount == 0) ? "?" : "&")
-			+ key + "=" + value;
-		
-		for(int i = 0; i < values.length; i++) {
-			path += "," + values[i];
-		}
-		
-		parameterCount++;
-	}
-	
-	void addParameter(String key, int value, int ...values) {
-		path += ((parameterCount == 0) ? "?" : "&")
-			+ key + "=" + value;
-		
-		for(int i = 0; i < values.length; i++) {
-			path += "," + values[i];
-		}
-		
-		parameterCount++;
-	}
-	
-	HttpURLConnection getConnection() throws IOException {
-		String URL;
-		
-		if(apiServer != null) {
-			URL = apiServer + path;
-		} else {
-			URL = path;
-		}
-		
-		HttpURLConnection connection = 
-				(HttpURLConnection) new URL(URL).openConnection();
-		
-		if (accessToken != null) {
+    void addParameter(String key, String[] values) {
+        path += ((parameterCount == 0) ? "?" : "&")
+                + key + "=" + values[0];
+
+        for (int i = 1; i < values.length; i++) {
+            path += "," + values[i];
+        }
+
+        parameterCount++;
+    }
+
+    void addParameter(String key, int[] values) {
+        path += ((parameterCount == 0) ? "?" : "&")
+                + key + "=" + values[0];
+
+        for (int i = 1; i < values.length; i++) {
+            path += "," + values[i];
+        }
+
+        parameterCount++;
+    }
+
+    void addParameter(String key, String value, String... values) {
+        path += ((parameterCount == 0) ? "?" : "&") + key + "=" + value;
+
+        for (String s : values) {
+            path += "," + s;
+        }
+
+        parameterCount++;
+    }
+
+    void addParameter(String key, int value, int... values) {
+        path += ((parameterCount == 0) ? "?" : "&") + key + "=" + value;
+
+        for (int j : values) {
+            path += "," + j;
+        }
+
+        parameterCount++;
+    }
+
+    HttpURLConnection getConnection() throws IOException {
+        String URL;
+
+        if (apiServer != null) {
+            URL = apiServer + path;
+        } else {
+            URL = path;
+        }
+
+        HttpURLConnection connection =
+                (HttpURLConnection) new URL(URL).openConnection();
+
+        if (accessToken != null) {
             connection.setRequestProperty("Authorization", "Bearer " + accessToken);
         }
-		
-		if(contentType != null) {
-			connection.setDoOutput(true);
-			connection.setRequestProperty("Content-Type", contentType);
-		}
-		
-		connection.setRequestMethod(requestMethod.name());
-			
-		return connection;
-	}
-	
-	@Override
-	public String toString() {
-		return requestMethod + " " + (apiServer != null ? apiServer : "") + path;
-	}
-	
-		
+
+        if (contentType != null) {
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", contentType);
+        }
+
+        connection.setRequestMethod(requestMethod.name());
+
+        return connection;
+    }
+
+    @Override
+    public String toString() {
+        return requestMethod + " " + (apiServer != null ? apiServer : "") + path;
+    }
+
+    /**
+     * Request methods for the HTTP request
+     */
+    enum RequestMethod {
+        GET,
+        POST
+    }
+
+
 }
