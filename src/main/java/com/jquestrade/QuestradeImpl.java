@@ -1,18 +1,11 @@
 package com.jquestrade;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
 import com.jquestrade.Candle.Interval;
 import com.jquestrade.Request.RequestMethod;
-import com.jquestrade.exceptions.ArgumentException;
-import com.jquestrade.exceptions.RefreshTokenException;
-import com.jquestrade.exceptions.StatusCodeException;
-import com.jquestrade.exceptions.TimeRangeException;
+import com.jquestrade.exceptions.*;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,16 +14,14 @@ import java.util.function.Consumer;
 public class QuestradeImpl implements Questrade {
 
     /**
-     * A string representation of this object's last HTTP request.
-     */
-    private String lastRequest;
-
-    /**
      * Date formatter object for converting <code>ZonedDateTime</code> objects to strings in the
      * ISO 8601 time format.
      */
     private static final DateTimeFormatter ISO_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
-
+    /**
+     * A string representation of this object's last HTTP request.
+     */
+    private String lastRequest;
     /**
      * Authorization object that is created with information retrieved when consuming refresh token.
      */
@@ -74,9 +65,9 @@ public class QuestradeImpl implements Questrade {
 
     @Override
     public Questrade activate(String refreshToken) throws RefreshTokenException {
-        if ( refreshToken != null ) {
+        if (refreshToken != null) {
             retrieveAccessToken(refreshToken);
-        } else if ( startingAuthorization != null ) {
+        } else if (startingAuthorization != null) {
             authorization = startingAuthorization;
             startingAuthorization = null;
         }
@@ -93,7 +84,8 @@ public class QuestradeImpl implements Questrade {
 
         try {
             sendRequest(request);
-        } catch (RefreshTokenException ignored) {}
+        } catch (RefreshTokenException ignored) {
+        }
     }
 
     /**
@@ -117,7 +109,7 @@ public class QuestradeImpl implements Questrade {
 
         authorization = new Gson().fromJson(responseJSON, Authorization.class);
 
-        if ( authRelayFunction != null ) {
+        if (authRelayFunction != null) {
             authRelayFunction.accept(authorization);
         }
     }
@@ -152,14 +144,6 @@ public class QuestradeImpl implements Questrade {
         return new Gson().fromJson(balancesJSON, Balances.class);
     }
 
-    /**
-     * Class used for GSON parsing, only in {@link QuestradeImpl#getAccounts()}
-     */
-    private static class Accounts {
-        private Account[] accounts;
-        private int userId;
-    }
-
     @Override
     public Account[] getAccounts() throws RefreshTokenException {
         String URL = "v1/accounts/";
@@ -191,16 +175,9 @@ public class QuestradeImpl implements Questrade {
         return ZonedDateTime.parse(timeISO);
     }
 
-    /**
-     * Private class used for GSON parsing, only in {@link QuestradeImpl#getActivities(String, ZonedDateTime, ZonedDateTime)}
-     */
-    private static class Activities {
-        private Activity[] activities;
-    }
-
     @Override
     public Activity[] getActivities(String accountNumber, ZonedDateTime startTime, ZonedDateTime endTime) throws RefreshTokenException {
-        if ( startTime.isAfter(endTime) ) {
+        if (startTime.isAfter(endTime)) {
             throw new TimeRangeException("The startTime must be earlier than the endTime.");
         }
 
@@ -220,16 +197,9 @@ public class QuestradeImpl implements Questrade {
         return activities.activities;
     }
 
-    /**
-     * Private class used for GSON parsing, only in {@link QuestradeImpl#getExecutions(String, ZonedDateTime, ZonedDateTime)}
-     */
-    private static class Executions {
-        private Execution[] executions;
-    }
-
     @Override
     public Execution[] getExecutions(String accountNumber, ZonedDateTime startTime, ZonedDateTime endTime) throws RefreshTokenException {
-        if ( startTime.isAfter(endTime) ) {
+        if (startTime.isAfter(endTime)) {
             throw new TimeRangeException("The startTime must be earlier than the endTime.");
         }
 
@@ -264,7 +234,7 @@ public class QuestradeImpl implements Questrade {
 
     @Override
     public Order[] getOrders(String accountNumber, ZonedDateTime startTime, ZonedDateTime endTime) throws RefreshTokenException {
-        if ( startTime.isAfter(endTime) ) {
+        if (startTime.isAfter(endTime)) {
             throw new TimeRangeException("The startTime must be earlier than the endTime.");
         }
 
@@ -278,13 +248,6 @@ public class QuestradeImpl implements Questrade {
         request.setApiServer(authorization.getApi_server());
 
         return finishGetOrders(request);
-    }
-
-    /**
-     * Private class used for GSON parsing, only in {@link QuestradeImpl#finishGetOrders(Request)}
-     */
-    private static class Orders {
-        private Order[] orders;
     }
 
     /**
@@ -303,13 +266,6 @@ public class QuestradeImpl implements Questrade {
         return orders.orders;
     }
 
-    /**
-     * Private class used for GSON parsing, only in {@link QuestradeImpl#getPositions(String)}
-     */
-    private static class Positions {
-        private Position[] positions;
-    }
-
     @Override
     public Position[] getPositions(String accountNumber) throws RefreshTokenException {
         String URL = "v1/accounts/" + accountNumber + "/positions";
@@ -326,16 +282,9 @@ public class QuestradeImpl implements Questrade {
         return positions.positions;
     }
 
-    /**
-     * Private class used for GSON parsing, only in {@link QuestradeImpl#getCandles(int, ZonedDateTime, ZonedDateTime, Interval)}
-     */
-    private static class Candles {
-        private Candle[] candles;
-    }
-
     @Override
     public Candle[] getCandles(int symbolId, ZonedDateTime startTime, ZonedDateTime endTime, Interval interval) throws RefreshTokenException {
-        if ( startTime.isAfter(endTime) ) {
+        if (startTime.isAfter(endTime)) {
             throw new TimeRangeException("The startTime must be earlier than the endTime.");
         }
 
@@ -354,13 +303,6 @@ public class QuestradeImpl implements Questrade {
         Candles candles = new Gson().fromJson(candlesJSON, Candles.class);
 
         return candles.candles;
-    }
-
-    /**
-     * Private class used for GSON parsing, only in {@link QuestradeImpl#getMarkets()}
-     */
-    private static class Markets {
-        private Market[] markets;
     }
 
     @Override
@@ -385,13 +327,6 @@ public class QuestradeImpl implements Questrade {
     }
 
     /**
-     * Private class used for GSON parsing, only in {@link QuestradeImpl#searchSymbol(String, int)}
-     */
-    private static class Symbols {
-        private Symbol[] symbols;
-    }
-
-    /**
      * Returns a search for a symbol containing basic information.<br><br>
      * * Example: If the {@code prefix} is {@code "BMO"}, the result set will contain basic information for
      * {@code "BMO"}, {@code "BMO.PRJ.TO"}, etc. (anything with {@code "BMO"} in it).
@@ -407,7 +342,7 @@ public class QuestradeImpl implements Questrade {
      * The Questrade API <b>GET symbols/search</b> documentation</a>
      */
     private Symbol[] searchSymbol(String prefix, int offset) throws RefreshTokenException {
-        if ( offset < 0 ) {
+        if (offset < 0) {
             throw new ArgumentException("offset argument cannot be less than 0");
         }
 
@@ -418,7 +353,7 @@ public class QuestradeImpl implements Questrade {
         request.setApiServer(authorization.getApi_server());
         request.setAccessToken(authorization.getAccess_token());
         request.addParameter("prefix", prefix);
-        if ( offset > 0 ) {
+        if (offset > 0) {
             request.addParameter("offset", offset + "");
         }
 
@@ -455,14 +390,6 @@ public class QuestradeImpl implements Questrade {
         return finishGetSymbol(request);
     }
 
-
-    /**
-     * Private class used for GSON parsing, only in {@link QuestradeImpl#finishGetOrders(Request)}
-     */
-    private static class SymbolInfos {
-        private SymbolInfo[] symbols;
-    }
-
     /**
      * Helper method to cut down on code. All getSymbol() methods funnel into here.
      */
@@ -470,13 +397,6 @@ public class QuestradeImpl implements Questrade {
         String symbolInfosJSON = sendRequest(request);
         SymbolInfos symbolsInfos = new Gson().fromJson(symbolInfosJSON, SymbolInfos.class);
         return symbolsInfos.symbols;
-    }
-
-    /**
-     * Private class used for GSON parsing, only in {@link QuestradeImpl#getQuote(int, int...)}
-     */
-    private static class Quotes {
-        private Quote[] quotes;
     }
 
     @Override
@@ -493,14 +413,6 @@ public class QuestradeImpl implements Questrade {
 
         Quotes quotes = new Gson().fromJson(quotesJSON, Quotes.class);
         return quotes.quotes;
-    }
-
-    /**
-     * Represents an error response returned by the Questrade API servers.
-     */
-    private static class Error {
-        private int code;
-        private String message;
     }
 
     /**
@@ -526,7 +438,7 @@ public class QuestradeImpl implements Questrade {
             //java.net.UnknownHostException
 
             // Response codes in the 200s are "successful"
-            if ( statusCode > 299 || statusCode < 200 ) {
+            if (statusCode > 299 || statusCode < 200) {
 
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
                 String responseJSON = in.readLine();
@@ -541,13 +453,13 @@ public class QuestradeImpl implements Questrade {
                 }
 
                 // Error code 1017 means access token is invalid or expired
-                if ( error.code == 1017 ) {
+                if (error.code == 1017) {
 
                     retrieveAccessToken(authorization.getRefresh_token()); // get new access token
                     request.setAccessToken(authorization.getAccess_token()); // set new access token
                     request.setApiServer(authorization.getApi_server()); // set new api server
                     return sendRequest(request); // resend fixed-up request
-                } else if ( error.code == 1002 || error.code == 1003 || error.code == 1004 ) {
+                } else if (error.code == 1002 || error.code == 1003 || error.code == 1004) {
                     throw new ArgumentException(error.message);
                 }
 
@@ -565,5 +477,84 @@ public class QuestradeImpl implements Questrade {
         }
 
         return null;
+    }
+
+    /**
+     * Class used for GSON parsing, only in {@link QuestradeImpl#getAccounts()}
+     */
+    private static class Accounts {
+        private Account[] accounts;
+        private int userId;
+    }
+
+    /**
+     * Private class used for GSON parsing, only in {@link QuestradeImpl#getActivities(String, ZonedDateTime, ZonedDateTime)}
+     */
+    private static class Activities {
+        private Activity[] activities;
+    }
+
+    /**
+     * Private class used for GSON parsing, only in {@link QuestradeImpl#getExecutions(String, ZonedDateTime, ZonedDateTime)}
+     */
+    private static class Executions {
+        private Execution[] executions;
+    }
+
+    /**
+     * Private class used for GSON parsing, only in {@link QuestradeImpl#finishGetOrders(Request)}
+     */
+    private static class Orders {
+        private Order[] orders;
+    }
+
+    /**
+     * Private class used for GSON parsing, only in {@link QuestradeImpl#getPositions(String)}
+     */
+    private static class Positions {
+        private Position[] positions;
+    }
+
+    /**
+     * Private class used for GSON parsing, only in {@link QuestradeImpl#getCandles(int, ZonedDateTime, ZonedDateTime, Interval)}
+     */
+    private static class Candles {
+        private Candle[] candles;
+    }
+
+    /**
+     * Private class used for GSON parsing, only in {@link QuestradeImpl#getMarkets()}
+     */
+    private static class Markets {
+        private Market[] markets;
+    }
+
+    /**
+     * Private class used for GSON parsing, only in {@link QuestradeImpl#searchSymbol(String, int)}
+     */
+    private static class Symbols {
+        private Symbol[] symbols;
+    }
+
+    /**
+     * Private class used for GSON parsing, only in {@link QuestradeImpl#finishGetOrders(Request)}
+     */
+    private static class SymbolInfos {
+        private SymbolInfo[] symbols;
+    }
+
+    /**
+     * Private class used for GSON parsing, only in {@link QuestradeImpl#getQuote(int, int...)}
+     */
+    private static class Quotes {
+        private Quote[] quotes;
+    }
+
+    /**
+     * Represents an error response returned by the Questrade API servers.
+     */
+    private static class Error {
+        private int code;
+        private String message;
     }
 }
