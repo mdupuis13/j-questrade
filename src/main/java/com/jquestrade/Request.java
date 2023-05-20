@@ -26,27 +26,6 @@ class Request {
         this.path = path;
     }
 
-    void addParameter(String key, String[] values) {
-        path += ((parameterCount == 0) ? "?" : "&")
-                + key + "=" + values[0];
-
-        for (int i = 1; i < values.length; i++) {
-            path += "," + values[i];
-        }
-
-        parameterCount++;
-    }
-
-    void addParameter(String key, int[] values) {
-        path += ((parameterCount == 0) ? "?" : "&")
-                + key + "=" + values[0];
-
-        for (int i = 1; i < values.length; i++) {
-            path += "," + values[i];
-        }
-
-        parameterCount++;
-    }
 
     void addParameter(String key, String value, String... values) {
         path += ((parameterCount == 0) ? "?" : "&") + key + "=" + value;
