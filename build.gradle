@@ -11,6 +11,15 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.google.code.gson:gson:2.8.9'
+
+    testImplementation(
+            'org.assertj:assertj-core:3.21.0',
+            'org.junit.jupiter:junit-jupiter:5.8.1'
+    )
+
 }
 
+test {
+    useJUnitPlatform()
+}

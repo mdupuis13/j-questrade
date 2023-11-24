@@ -1,9 +1,3 @@
-import java.io.*;
-import java.util.Scanner;
-import com.jquestrade.*;
-import com.jquestrade.Balances.Currency;
-import com.jquestrade.exceptions.*;
-
 /**
  * An example app using jQuestrade. 
  * @author Matei Marica
@@ -12,8 +6,9 @@ import com.jquestrade.exceptions.*;
  */
 class ExampleApp {
 
+/*
 	// The file that contains the values needed for authorization (refresh token, access token, API server)
-	private static final File AUTH_FILE = new File("C:/Users/Public/auth.txt");
+	private static final File AUTH_FILE = new File("auth.txt");
 	
 	public static void main(String[] args) {
 		
@@ -53,7 +48,7 @@ class ExampleApp {
 			System.err.println("Invalid refresh token");
 			e.printStackTrace();
 		}
-	    
+
 	}
     
 	// Here we save our new refresh token to auth.txt, so we can reuse it next time this app runs
@@ -70,5 +65,6 @@ class ExampleApp {
 			e.printStackTrace();
 		}
 	}
-    
+*/
+
 }
