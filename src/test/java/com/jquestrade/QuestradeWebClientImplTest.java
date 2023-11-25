@@ -14,7 +14,7 @@ class QuestradeWebClientImplTest {
 
     @BeforeEach
     void setUp() {
-        sut = new QuestradeWebClientImpl(MY_REFRESH_TOKEN, MY_ACCESS_TOKEN, MY_API_SERVER);
+        sut = new QuestradeWebClientImpl();
     }
 
     @Test
@@ -22,14 +22,18 @@ class QuestradeWebClientImplTest {
         assertThat(sut).isNotNull();
     }
 
-/*
     @Test
-    void getAuthorization() {
-        Authorization auth = sut.getAuthorization();
+    void givenValidCredentials_WhenITryToAuthenticate_IGetAnAccessToken() {
+        String oldRefreshToken = "old_refresh_token";
+        String oldAccessToken = "old_access_token";
+        String oldServerUrl = "old_server_url";
+
+
+        Authorization auth = sut.authenticate(oldRefreshToken, oldAccessToken, oldServerUrl);
 
         assertThat(auth.getAccess_token()).isEqualTo(MY_ACCESS_TOKEN);
         assertThat(auth.getRefresh_token()).isEqualTo(MY_REFRESH_TOKEN);
         assertThat(auth.getApi_server()).isEqualTo(MY_API_SERVER);
     }
-*/
+
 }
