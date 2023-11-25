@@ -37,8 +37,7 @@ dependencies {
     testImplementation(
             'org.springframework.boot:spring-boot-starter-test',
 
-//            'org.assertj:assertj-core:3.21.0',
-//            'org.junit.jupiter:junit-jupiter:5.8.1'
+            'org.wiremock:wiremock-standalone:3.3.1'
     )
 }
 
