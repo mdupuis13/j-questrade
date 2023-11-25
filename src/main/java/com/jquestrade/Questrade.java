@@ -4,6 +4,7 @@ import com.jquestrade.exceptions.ArgumentException;
 import com.jquestrade.exceptions.RefreshTokenException;
 import com.jquestrade.exceptions.StatusCodeException;
 
+import java.time.ZonedDateTime;
 import java.util.function.Consumer;
 
 /**
@@ -91,7 +92,7 @@ public interface Questrade {
      * @see <a href="https://www.questrade.com/api/documentation/rest-operations/account-calls/accounts-id-balances">
      * The Questrade API <b>GET accounts/:id/balances</b> documentation</a>
      */
-//    Balances getBalances(String accountNumber) throws RefreshTokenException;
+    Balances getBalances(String accountNumber) throws RefreshTokenException;
 
     /**
      * Get all the accounts for the associated Questrade account.
@@ -102,7 +103,7 @@ public interface Questrade {
      * @see <a href="https://questrade.com/api/documentation/rest-operations/account-calls/accounts">
      * The Questrade API <b>GET accounts</b> documentation</a>
      */
-//    Account[] getAccounts() throws RefreshTokenException;
+    Account[] getAccounts() throws RefreshTokenException;
 
     /**
      * Returns the current server time in ISO format and Eastern time zone (EST).
@@ -113,7 +114,7 @@ public interface Questrade {
      * @see <a href="https://www.questrade.com/api/documentation/rest-operations/account-calls/time">
      * The Questrade API <b>GET time</b> documentation</a>
      */
-//    ZonedDateTime getTime() throws RefreshTokenException;
+    ZonedDateTime getTime() throws RefreshTokenException;
 
     /**
      * Get all the activities of an account in a given time period. A maximum of 30 days of data can be requested at a time.
@@ -128,7 +129,7 @@ public interface Questrade {
      * @see <a href="https://www.questrade.com/api/documentation/rest-operations/account-calls/accounts-id-activities">
      * The Questrade API <b>GET accounts/:id/activities</b> documentation</a>
      */
-//    Activity[] getActivities(String accountNumber, ZonedDateTime startTime, ZonedDateTime endTime) throws RefreshTokenException;
+    Activity[] getActivities(String accountNumber, ZonedDateTime startTime, ZonedDateTime endTime) throws RefreshTokenException;
 
     /**
      * Get all the executions of an account in a given time period. A maximum of 30 days of data can be requested at a time.
@@ -143,7 +144,7 @@ public interface Questrade {
      * @see <a href="https://www.questrade.com/api/documentation/rest-operations/account-calls/accounts-id-executions">
      * The Questrade API <b>GET accounts/:id/executions</b> documentation</a>
      */
-//    Execution[] getExecutions(String accountNumber, ZonedDateTime startTime, ZonedDateTime endTime) throws RefreshTokenException;
+    Execution[] getExecutions(String accountNumber, ZonedDateTime startTime, ZonedDateTime endTime) throws RefreshTokenException;
 
     /**
      * Get all the orders of an account in a given time period, using one or more order IDs.
@@ -163,7 +164,7 @@ public interface Questrade {
      * @see <a href="https://www.questrade.com/api/documentation/rest-operations/account-calls/accounts-id-orders">
      * The Questrade API <b>GET accounts/:id/orders[/:orderId]</b> documentation</a>
      */
-//    Order[] getOrders(String accountNumber, int orderId, int... orderIds) throws RefreshTokenException;
+    Order[] getOrders(String accountNumber, int orderId, int... orderIds) throws RefreshTokenException;
     /**
      * Get all the orders of an account in a given time period. A maximum of 30 days of data can be requested at a time.
      * This will get all orders in the time period, whether still open or closed.
@@ -177,7 +178,7 @@ public interface Questrade {
      * @see <a href="https://www.questrade.com/api/documentation/rest-operations/account-calls/accounts-id-orders">
      * The Questrade API <b>GET accounts/:id/orders[/:orderId]</b> documentation</a>
      */
-//    Order[] getOrders(String accountNumber, ZonedDateTime startTime, ZonedDateTime endTime) throws RefreshTokenException;
+    Order[] getOrders(String accountNumber, ZonedDateTime startTime, ZonedDateTime endTime) throws RefreshTokenException;
 
     /**
      * Get all the current positions for a given account.
@@ -190,7 +191,7 @@ public interface Questrade {
      * @see <a href="https://www.questrade.com/api/documentation/rest-operations/account-calls/accounts-id-orders">
      * The Questrade API <b>GET accounts/:id/orders[/:orderId]</b> documentation</a>
      */
-//    Position[] getPositions(String accountNumber) throws RefreshTokenException;
+    Position[] getPositions(String accountNumber) throws RefreshTokenException;
 
     /**
      * Returns historical market data in the form of OHLC candlesticks for a specified symbol.
@@ -207,7 +208,7 @@ public interface Questrade {
      * @see <a href="https://www.questrade.com/api/documentation/rest-operations/market-calls/markets-candles-id">
      * The Questrade API <b>GET markets/candles/:id</b> documentation</a>
      */
-//    Candle[] getCandles(int symbolId, ZonedDateTime startTime, ZonedDateTime endTime, Candle.Interval interval) throws RefreshTokenException;
+    Candle[] getCandles(int symbolId, ZonedDateTime startTime, ZonedDateTime endTime, Candle.Interval interval) throws RefreshTokenException;
 
     /**
      * Retrieves information about supported markets.
@@ -218,7 +219,7 @@ public interface Questrade {
      * @see <a href="https://www.questrade.com/api/documentation/rest-operations/market-calls/markets-candles-id">
      * The Questrade API <b>GET markets</b> documentation</a>
      */
-//    Market[] getMarkets() throws RefreshTokenException;
+    Market[] getMarkets() throws RefreshTokenException;
 
     /**
      * Returns a search for a symbol containing basic information. This method is the same as calling
@@ -233,7 +234,7 @@ public interface Questrade {
      * @see <a href="https://www.questrade.com/api/documentation/rest-operations/market-calls/symbols-search">
      * The Questrade API <b>GET symbols/search</b> documentation</a>
      */
-//    Symbol[] searchSymbol(String prefix) throws RefreshTokenException;
+    Symbol[] searchSymbol(String prefix) throws RefreshTokenException;
 
     /**
      * Returns detailed information for one or more specific symbols using their internal unique identifiers.
@@ -246,7 +247,7 @@ public interface Questrade {
      * @see <a href="https://www.questrade.com/api/documentation/rest-operations/market-calls/symbols-id">
      * The Questrade API <b>GET symbols/:id</b> documentation</a>
      */
-//    SymbolInfo[] getSymbol(int id, int... ids) throws RefreshTokenException;
+    SymbolInfo[] getSymbol(int id, int... ids) throws RefreshTokenException;
 
     /**
      * Returns detailed information for one or more specific symbols using their symbol names.
@@ -259,7 +260,7 @@ public interface Questrade {
      * @see <a href="https://www.questrade.com/api/documentation/rest-operations/market-calls/symbols-id">
      * The Questrade API <b>GET symbols/:id</b> documentation</a>
      */
-//    SymbolInfo[] getSymbol(String name, String... names) throws RefreshTokenException;
+    SymbolInfo[] getSymbol(String name, String... names) throws RefreshTokenException;
 
     /**
      * Retrieves a single Level 1 market data quote for one or more symbols. <br><br>
@@ -276,5 +277,5 @@ public interface Questrade {
      * @see <a href="https://www.questrade.com/api/documentation/rest-operations/market-calls/markets-quotes-id">
      * The Questrade API <b>GET markets/quotes/:id</b> documentation</a>
      */
-//    Quote[] getQuote(int id, int... ids) throws RefreshTokenException;
+    Quote[] getQuote(int id, int... ids) throws RefreshTokenException;
 }

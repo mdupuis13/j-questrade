@@ -1,16 +1,19 @@
 package com.jquestrade;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.jquestrade.Request.RequestMethod;
 import com.jquestrade.exceptions.ArgumentException;
 import com.jquestrade.exceptions.RefreshTokenException;
 import com.jquestrade.exceptions.StatusCodeException;
+import com.jquestrade.exceptions.TimeRangeException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 
@@ -134,7 +137,6 @@ public class QuestradeImpl implements Questrade {
         return this;
     }
 
-/*
     @Override
     public Balances getBalances(String accountNumber) throws RefreshTokenException {
         String URL = "v1/accounts/%s/balances".formatted(accountNumber);
@@ -148,9 +150,7 @@ public class QuestradeImpl implements Questrade {
 
         return new Gson().fromJson(balancesJSON, Balances.class);
     }
-*/
 
-/*
     private static class Accounts {
         private Account[] accounts;
         private int userId;
@@ -171,9 +171,7 @@ public class QuestradeImpl implements Questrade {
 
         return accounts.accounts;
     }
-*/
 
-/*
     @Override
     public ZonedDateTime getTime() throws RefreshTokenException {
         String URL = "v1/time";
@@ -188,9 +186,7 @@ public class QuestradeImpl implements Questrade {
         String timeISO = new Gson().fromJson(timeJSON, JsonObject.class).get("time").getAsString();
         return ZonedDateTime.parse(timeISO);
     }
-*/
 
-/*
     private static class Activities {
         private Activity[] activities;
     }
@@ -216,9 +212,7 @@ public class QuestradeImpl implements Questrade {
 
         return activities.activities;
     }
-*/
 
-/*
     private static class Executions {
         private Execution[] executions;
     }
@@ -244,9 +238,8 @@ public class QuestradeImpl implements Questrade {
 
         return executions.executions;
     }
-*/
 
-/*
+
     @Override
     public Order[] getOrders(String accountNumber, int orderId, int... orderIds) throws RefreshTokenException {
         String URL = "v1/accounts/" + accountNumber + "/orders";
@@ -282,7 +275,7 @@ public class QuestradeImpl implements Questrade {
         private Order[] orders;
     }
 
-*
+    /**
      * A private method that all {@code getOrders} methods eventually funnel in to. Method exists only to not have to repeat code.
      *
      * @param request The API request created in some {@code getOrders} method. Contains the URL, parameters, request method, etc.
@@ -291,16 +284,14 @@ public class QuestradeImpl implements Questrade {
      * @throws StatusCodeException   If an error occurs when contacting the Questrade API.
      * @see <a href="https://www.questrade.com/api/documentation/rest-operations/account-calls/accounts-id-orders">
      * The Questrade API <b>GET accounts/:id/orders[/:orderId]</b> documentation</a>
-
+    */
 
     private Order[] finishGetOrders(Request request) throws RefreshTokenException {
         String ordersJSON = sendRequest(request);
         Orders orders = new Gson().fromJson(ordersJSON, Orders.class);
         return orders.orders;
     }
-*/
 
-/*
     private static class Positions {
         private Position[] positions;
     }
@@ -320,15 +311,13 @@ public class QuestradeImpl implements Questrade {
 
         return positions.positions;
     }
-*/
 
-/*
     private static class Candles {
         private Candle[] candles;
     }
 
     @Override
-    public Candle[] getCandles(int symbolId, ZonedDateTime startTime, ZonedDateTime endTime, Interval interval) throws RefreshTokenException {
+    public Candle[] getCandles(int symbolId, ZonedDateTime startTime, ZonedDateTime endTime, Candle.Interval interval) throws RefreshTokenException {
         if ( startTime.isAfter(endTime) ) {
             throw new TimeRangeException("The startTime must be earlier than the endTime.");
         }
@@ -349,9 +338,7 @@ public class QuestradeImpl implements Questrade {
 
         return candles.candles;
     }
-*/
 
-/*
     private static class Markets {
         private Market[] markets;
     }
@@ -371,9 +358,7 @@ public class QuestradeImpl implements Questrade {
 
         return markets.markets;
     }
-*/
 
-/*
     @Override
     public Symbol[] searchSymbol(String prefix) throws RefreshTokenException {
         return searchSymbol(prefix, 0);
@@ -384,8 +369,7 @@ public class QuestradeImpl implements Questrade {
     }
 
 
-    */
-/**
+    /**
      * Returns a search for a symbol containing basic information.<br><br>
      * * Example: If the {@code prefix} is {@code "BMO"}, the result set will contain basic information for
      * {@code "BMO"}, {@code "BMO.PRJ.TO"}, etc. (anything with {@code "BMO"} in it).
@@ -400,8 +384,6 @@ public class QuestradeImpl implements Questrade {
      * @see <a href="https://www.questrade.com/api/documentation/rest-operations/market-calls/symbols-search">
      * The Questrade API <b>GET symbols/search</b> documentation</a>
      */
-/*
-
     private Symbol[] searchSymbol(String prefix, int offset) throws RefreshTokenException {
         if ( offset < 0 ) {
             throw new ArgumentException("offset argument cannot be less than 0");
@@ -455,20 +437,16 @@ public class QuestradeImpl implements Questrade {
         private SymbolInfo[] symbols;
     }
 
-    */
-/**
+    /**
      * Helper method to cut down on code. All getSymbol() methods funnel into here.
      */
-/*
 
     private SymbolInfo[] finishGetSymbol(Request request) throws RefreshTokenException {
         String symbolInfosJSON = sendRequest(request);
         SymbolInfos symbolsInfos = new Gson().fromJson(symbolInfosJSON, SymbolInfos.class);
         return symbolsInfos.symbols;
     }
-*/
 
-/*
     private static class Quotes {
         private Quote[] quotes;
     }
@@ -488,7 +466,6 @@ public class QuestradeImpl implements Questrade {
         Quotes quotes = new Gson().fromJson(quotesJSON, Quotes.class);
         return quotes.quotes;
     }
-*/
 
     /**
      * Represents an error response returned by the Questrade API servers.
@@ -556,7 +533,7 @@ public class QuestradeImpl implements Questrade {
             return responseJSON;
 
         } catch (IOException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
         return null;
