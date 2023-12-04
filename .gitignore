@@ -125,4 +125,8 @@ fabric.properties
 .idea/**/azureSettings.xml
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij
+
 /.idea/
+
+### wiremock ###
+/wiremock/wiremock-standalone-3.3.1.jar
