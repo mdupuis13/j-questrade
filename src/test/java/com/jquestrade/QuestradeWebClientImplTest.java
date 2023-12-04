@@ -1,10 +1,12 @@
 package com.jquestrade;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@WireMockTest(httpsEnabled = true, httpsPort = 8443)
 class QuestradeWebClientImplTest {
 
     public static final String MY_API_SERVER = "MyApiServer";
@@ -27,6 +29,7 @@ class QuestradeWebClientImplTest {
         String oldRefreshToken = "old_refresh_token";
         String oldAccessToken = "old_access_token";
         String oldServerUrl = "old_server_url";
+
 
 
         Authorization auth = sut.authenticate(oldRefreshToken, oldAccessToken, oldServerUrl);
