@@ -1,0 +1,41 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/v1/accounts",
+    "headers": {
+      "Authorization": {
+        "contains": "Bearer my-access-token-123"
+      }
+    }
+  },
+
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "accounts": [
+        {
+          "type": "TFSA",
+          "number": "51580807",
+          "status": "Active",
+          "isPrimary": true,
+          "isBilling": true,
+          "clientAccountType": "Individual"
+        },
+        {
+          "type": "RRSP",
+          "number": "51580808",
+          "status": "Active",
+          "isPrimary": false,
+          "isBilling": false,
+          "clientAccountType": "Individual"
+        }
+      ],
+      "userId": 248581
+    },
+    "headers": {
+      "Content-Type": "application/json; charset=utf-8",
+      "date": "Tue, 05 Dec 2023 01:34:24 GMT",
+      "x-ratelimit-remaining": "29999"
+    }
+  }
+}
