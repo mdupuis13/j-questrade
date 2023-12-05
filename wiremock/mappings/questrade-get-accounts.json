@@ -15,7 +15,7 @@
       "accounts": [
         {
           "type": "TFSA",
-          "number": "51580807",
+          "number": "99912345",
           "status": "Active",
           "isPrimary": true,
           "isBilling": true,
@@ -23,18 +23,19 @@
         },
         {
           "type": "RRSP",
-          "number": "51580808",
+          "number": "99912346",
           "status": "Active",
           "isPrimary": false,
           "isBilling": false,
           "clientAccountType": "Individual"
         }
       ],
-      "userId": 248581
+      "userId": 999123
     },
+    "transformers": ["response-template"],
     "headers": {
       "Content-Type": "application/json; charset=utf-8",
-      "date": "Tue, 05 Dec 2023 01:34:24 GMT",
+      "date": "{{now format='EEE, dd MMM yyyy HH:mm:ss z'}}",
       "x-ratelimit-remaining": "29999"
     }
   }
