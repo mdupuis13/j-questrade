@@ -7,7 +7,7 @@
         "equalTo": "refresh_token"
       },
       "refresh_token": {
-        "equalTo": "abc123"
+        "equalTo": "my-lone-refresh-token"
       }
     }
   },
@@ -15,14 +15,16 @@
   "response": {
     "status": 200,
     "jsonBody": {
-      "access_token": "abc-access_token-123",
+      "access_token": "my-access-token-123",
       "api_server": "https://api03.iq.questrade.com/",
       "expires_in": 1800,
       "refresh_token": "xyz-refresh_token-987",
       "token_type": "Bearer"
     },
+    "transformers": ["response-template"],
     "headers": {
-      "Content-Type": "application/json; charset=utf-8"
+      "Content-Type": "application/json; charset=utf-8",
+      "date": "{{now format='EEE, dd MMM yyyy HH:mm:ss z'}}"
     }
   }
 }
