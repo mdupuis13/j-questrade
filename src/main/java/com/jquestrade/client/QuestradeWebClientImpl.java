@@ -1,8 +1,8 @@
-package com.jquestrade;
+package com.jquestrade.client;
 
 public class QuestradeWebClientImpl implements QuestradeWebClient {
 
-    private String refreshToken;
+    private Authorization auth_info;
     private String accessToken;
     private String apiServerURL;
 
@@ -14,10 +14,12 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
 
     @Override
     public Authorization authenticate(String refreshToken, String accessToken, String apiServerURL) {
-        this.accessToken = accessToken;
-        this.apiServerURL = apiServerURL;
-        this.refreshToken = refreshToken;
+        this.auth_info = new Authorization(accessToken,apiServerURL,refreshToken);
 
-        return new Authorization(refreshToken,accessToken,apiServerURL);
+        return this.auth_info;
+    }
+
+    private <T> T makeCall(String url) {
+        return null;
     }
 }
