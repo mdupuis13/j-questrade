@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.jquestrade.Request.RequestMethod;
+import com.jquestrade.client.Authorization;
 import com.jquestrade.exceptions.ArgumentException;
 import com.jquestrade.exceptions.RefreshTokenException;
 import com.jquestrade.exceptions.StatusCodeException;
@@ -85,7 +86,7 @@ public class QuestradeImpl implements Questrade {
 
     @Override
     public void revokeAuthorization() {
-        String URL = "https://login.questrade.com/oauth2/token?grant_type=refresh_token&refresh_token=%s".formatted(authorization.getRefresh_token());
+        String URL = "https://login.questrade.com/oauth2/token?grant_type=refresh_token&refresh_token=%s".formatted(authorization.refresh_token());
 
         Request request = new Request(URL);
         request.setRequestMethod(RequestMethod.GET);
@@ -100,7 +101,7 @@ public class QuestradeImpl implements Questrade {
      * {@link Authorization} object to be relayed to <i>authorization relay function</i>
      * (if set using the {@link #setAuthRelay(Consumer)} method).<br><br>
      * For reference, an access token usually expires in 1800 seconds (30 minutes). This value can be retrieved by using
-     * {@link #getAuthorization()} then the {@link Authorization#getExpires_in()} method.
+     * {@link #getAuthorization()} then the {@link Authorization#expires_in()} method.
      *
      * @param refreshToken The refresh token to be used to refresh the authorization.
      * @throws RefreshTokenException If the refresh token is invalid.
@@ -123,7 +124,7 @@ public class QuestradeImpl implements Questrade {
 
     @Override
     public void retrieveAccessToken() throws RefreshTokenException {
-        retrieveAccessToken(authorization.getRefresh_token());
+        retrieveAccessToken(authorization.refresh_token());
     }
 
     @Override
@@ -142,9 +143,9 @@ public class QuestradeImpl implements Questrade {
         String URL = "v1/accounts/%s/balances".formatted(accountNumber);
 
         Request request = new Request(URL);
-        request.setAccessToken(authorization.getAccess_token());
+        request.setAccessToken(authorization.access_token());
         request.setRequestMethod(RequestMethod.GET);
-        request.setApiServer(authorization.getApi_server());
+        request.setApiServer(authorization.api_server());
 
         String balancesJSON = sendRequest(request);
 
@@ -161,9 +162,9 @@ public class QuestradeImpl implements Questrade {
         String URL = "v1/accounts/";
 
         Request request = new Request(URL);
-        request.setAccessToken(authorization.getAccess_token());
+        request.setAccessToken(authorization.access_token());
         request.setRequestMethod(RequestMethod.GET);
-        request.setApiServer(authorization.getApi_server());
+        request.setApiServer(authorization.api_server());
 
         String accountsJSON = sendRequest(request);
 
@@ -178,8 +179,8 @@ public class QuestradeImpl implements Questrade {
 
         Request request = new Request(URL);
         request.setRequestMethod(RequestMethod.GET);
-        request.setApiServer(authorization.getApi_server());
-        request.setAccessToken(authorization.getAccess_token());
+        request.setApiServer(authorization.api_server());
+        request.setAccessToken(authorization.access_token());
 
         String timeJSON = sendRequest(request);
 
@@ -193,7 +194,7 @@ public class QuestradeImpl implements Questrade {
 
     @Override
     public Activity[] getActivities(String accountNumber, ZonedDateTime startTime, ZonedDateTime endTime) throws RefreshTokenException {
-        if ( startTime.isAfter(endTime) ) {
+        if (startTime.isAfter(endTime)) {
             throw new TimeRangeException("The startTime must be earlier than the endTime.");
         }
 
@@ -201,8 +202,8 @@ public class QuestradeImpl implements Questrade {
 
         Request request = new Request(URL);
         request.setRequestMethod(RequestMethod.GET);
-        request.setApiServer(authorization.getApi_server());
-        request.setAccessToken(authorization.getAccess_token());
+        request.setApiServer(authorization.api_server());
+        request.setAccessToken(authorization.access_token());
         request.addParameter("startTime", startTime.format(ISO_FORMATTER));
         request.addParameter("endTime", endTime.format(ISO_FORMATTER));
 
@@ -219,7 +220,7 @@ public class QuestradeImpl implements Questrade {
 
     @Override
     public Execution[] getExecutions(String accountNumber, ZonedDateTime startTime, ZonedDateTime endTime) throws RefreshTokenException {
-        if ( startTime.isAfter(endTime) ) {
+        if (startTime.isAfter(endTime)) {
             throw new TimeRangeException("The startTime must be earlier than the endTime.");
         }
 
@@ -227,8 +228,8 @@ public class QuestradeImpl implements Questrade {
 
         Request request = new Request(URL);
         request.setRequestMethod(RequestMethod.GET);
-        request.setAccessToken(authorization.getAccess_token());
-        request.setApiServer(authorization.getApi_server());
+        request.setAccessToken(authorization.access_token());
+        request.setApiServer(authorization.api_server());
         request.addParameter("startTime", startTime.format(ISO_FORMATTER));
         request.addParameter("endTime", endTime.format(ISO_FORMATTER));
 
@@ -246,8 +247,8 @@ public class QuestradeImpl implements Questrade {
 
         Request request = new Request(URL);
         request.setRequestMethod(RequestMethod.GET);
-        request.setApiServer(authorization.getApi_server());
-        request.setAccessToken(authorization.getAccess_token());
+        request.setApiServer(authorization.api_server());
+        request.setAccessToken(authorization.access_token());
         request.addParameter("ids", orderId, orderIds);
 
         return finishGetOrders(request);
@@ -263,10 +264,10 @@ public class QuestradeImpl implements Questrade {
 
         Request request = new Request(URL);
         request.setRequestMethod(RequestMethod.GET);
-        request.setAccessToken(authorization.getAccess_token());
+        request.setAccessToken(authorization.access_token());
         request.addParameter("startTime", startTime.format(ISO_FORMATTER));
         request.addParameter("endTime", endTime.format(ISO_FORMATTER));
-        request.setApiServer(authorization.getApi_server());
+        request.setApiServer(authorization.api_server());
 
         return finishGetOrders(request);
     }
@@ -302,8 +303,8 @@ public class QuestradeImpl implements Questrade {
 
         Request request = new Request(URL);
         request.setRequestMethod(RequestMethod.GET);
-        request.setApiServer(authorization.getApi_server());
-        request.setAccessToken(authorization.getAccess_token());
+        request.setApiServer(authorization.api_server());
+        request.setAccessToken(authorization.access_token());
 
         String positionsJSON = sendRequest(request);
 
@@ -318,7 +319,7 @@ public class QuestradeImpl implements Questrade {
 
     @Override
     public Candle[] getCandles(int symbolId, ZonedDateTime startTime, ZonedDateTime endTime, Candle.Interval interval) throws RefreshTokenException {
-        if ( startTime.isAfter(endTime) ) {
+        if (startTime.isAfter(endTime)) {
             throw new TimeRangeException("The startTime must be earlier than the endTime.");
         }
 
@@ -326,8 +327,8 @@ public class QuestradeImpl implements Questrade {
 
         Request request = new Request(URL);
         request.setRequestMethod(RequestMethod.GET);
-        request.setApiServer(authorization.getApi_server());
-        request.setAccessToken(authorization.getAccess_token());
+        request.setApiServer(authorization.api_server());
+        request.setAccessToken(authorization.access_token());
         request.addParameter("startTime", startTime.format(ISO_FORMATTER));
         request.addParameter("endTime", endTime.format(ISO_FORMATTER));
         request.addParameter("interval", interval.name());
@@ -349,8 +350,8 @@ public class QuestradeImpl implements Questrade {
 
         Request request = new Request(URL);
         request.setRequestMethod(RequestMethod.GET);
-        request.setApiServer(authorization.getApi_server());
-        request.setAccessToken(authorization.getAccess_token());
+        request.setApiServer(authorization.api_server());
+        request.setAccessToken(authorization.access_token());
 
         String marketsJSON = sendRequest(request);
 
@@ -385,7 +386,7 @@ public class QuestradeImpl implements Questrade {
      * The Questrade API <b>GET symbols/search</b> documentation</a>
      */
     private Symbol[] searchSymbol(String prefix, int offset) throws RefreshTokenException {
-        if ( offset < 0 ) {
+        if (offset < 0) {
             throw new ArgumentException("offset argument cannot be less than 0");
         }
 
@@ -393,10 +394,10 @@ public class QuestradeImpl implements Questrade {
 
         Request request = new Request(URL);
         request.setRequestMethod(RequestMethod.GET);
-        request.setApiServer(authorization.getApi_server());
-        request.setAccessToken(authorization.getAccess_token());
+        request.setApiServer(authorization.api_server());
+        request.setAccessToken(authorization.access_token());
         request.addParameter("prefix", prefix);
-        if ( offset > 0 ) {
+        if (offset > 0) {
             request.addParameter("offset", offset + "");
         }
 
@@ -413,8 +414,8 @@ public class QuestradeImpl implements Questrade {
 
         Request request = new Request(URL);
         request.setRequestMethod(RequestMethod.GET);
-        request.setApiServer(authorization.getApi_server());
-        request.setAccessToken(authorization.getAccess_token());
+        request.setApiServer(authorization.api_server());
+        request.setAccessToken(authorization.access_token());
         request.addParameter("ids", id, ids);
 
         return finishGetSymbol(request);
@@ -426,8 +427,8 @@ public class QuestradeImpl implements Questrade {
 
         Request request = new Request(URL);
         request.setRequestMethod(RequestMethod.GET);
-        request.setApiServer(authorization.getApi_server());
-        request.setAccessToken(authorization.getAccess_token());
+        request.setApiServer(authorization.api_server());
+        request.setAccessToken(authorization.access_token());
         request.addParameter("names", name, names);
 
         return finishGetSymbol(request);
@@ -457,8 +458,8 @@ public class QuestradeImpl implements Questrade {
 
         Request request = new Request(URL);
         request.setRequestMethod(RequestMethod.GET);
-        request.setApiServer(authorization.getApi_server());
-        request.setAccessToken(authorization.getAccess_token());
+        request.setApiServer(authorization.api_server());
+        request.setAccessToken(authorization.access_token());
         request.addParameter("ids", id, ids);
 
         String quotesJSON = sendRequest(request);
@@ -515,9 +516,9 @@ public class QuestradeImpl implements Questrade {
                 // Error code 1017 means access token is invalid or expired
                 if ( error.code == 1017 ) {
 
-                    retrieveAccessToken(authorization.getRefresh_token()); // get new access token
-                    request.setAccessToken(authorization.getAccess_token()); // set new access token
-                    request.setApiServer(authorization.getApi_server()); // set new api server
+                    retrieveAccessToken(authorization.refresh_token()); // get new access token
+                    request.setAccessToken(authorization.access_token()); // set new access token
+                    request.setApiServer(authorization.api_server()); // set new api server
                     return sendRequest(request); // resend fixed-up request
                 } else if ( error.code == 1002 || error.code == 1003 || error.code == 1004 ) {
                     throw new ArgumentException(error.message);
