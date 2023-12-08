@@ -29,6 +29,7 @@ dependencyManagement {
 dependencies {
     implementation(
             'org.springframework.boot:spring-boot-starter',
+            'org.springframework.boot:spring-boot-starter-webflux',
 
             'com.google.code.gson:gson:2.8.9',
             'org.projectlombok:lombok:1.18.28'
@@ -37,7 +38,8 @@ dependencies {
     testImplementation(
             'org.springframework.boot:spring-boot-starter-test',
 
-            'org.wiremock:wiremock-standalone:3.3.1'
+            'org.wiremock:wiremock-standalone:3.3.1',
+            'org.instancio:instancio-junit:3.6.0'
     )
 }
 
