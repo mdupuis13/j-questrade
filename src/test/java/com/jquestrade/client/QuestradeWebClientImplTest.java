@@ -17,10 +17,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 class QuestradeWebClientImplTest {
 
     @RegisterExtension
-    static WireMockExtension wiremock = WireMockExtension.newInstance()
-                                                         .options(wireMockConfig().dynamicPort()
-                                                                                  .usingFilesUnderDirectory("wiremock")
-                                                         ).build();
+    static WireMockExtension wiremock =
+            WireMockExtension.newInstance()
+                             .options(wireMockConfig().dynamicPort()
+                                                      .usingFilesUnderDirectory("wiremock")
+                             ).build();
 
 
     QuestradeWebClient sut;
