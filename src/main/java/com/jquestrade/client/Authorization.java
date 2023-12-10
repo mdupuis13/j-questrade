@@ -23,6 +23,6 @@ public record Authorization(String access_token,
 //    }
 
     public Boolean isValid(){
-        return !(access_token.isBlank() || access_token.isEmpty());
+        return  !(access_token == null || access_token.isBlank() || access_token.isEmpty());
     }
 }
