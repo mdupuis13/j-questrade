@@ -1,25 +1,20 @@
-# jQuestrade
-[![](https://jitpack.io/v/mateimarica/j-questrade.svg)](https://jitpack.io/#mateimarica/j-questrade)
+# j-Questrade
 
-jQuestrade is a [Questrade API](https://www.questrade.com/api) wrapper written in Java. It aims to simplify access to Questrade's API.
-
-<br>
+j-Questrade is a [Questrade API](https://www.questrade.com/api) wrapper written in Java. It aims to simplify access to Questrade's API.
 
 ## Features
 * Automatic access token renewal
 * Methods for all account calls and most market calls
-* [Authorization relaying](https://github.com/mateimarica/j-questrade/wiki/Using-an-authorization-relay)
 * Ability to interact with Questrade API responses as Java objects
 
-<br>
-
+<!--- Commented until the interface is minimally functional
 ## Example Usage
 
 ```java
 Questrade q = new Questrade(refreshToken);
 
 try {
-	q.activate(); // This must be called before making API requests
+	q.authenticate(); // This must be called before making API requests
 	
 	Account[] accs     = q.getAccounts();  // Get all accounts
 	ZonedDateTime time = q.getTime();      // Get server time
@@ -34,51 +29,14 @@ try {
 	// Prompt user to enter another refresh token
 }
 ```
-
-<br>
+-->
 
 ## Installation
-### Gradle:
-* Add the following into your `build.gradle` file:
-```gradle
-repositories {
-	maven { url 'https://jitpack.io' }
-}
-```
-```gradle
-dependencies {
-	implementation 'com.github.mateimarica:j-questrade:1.3'
-}
-```
-<br>
-
-### Maven:
-* Add the following into your `pom.xml` file:
-```xml
-<repositories>
-	<repository>
-		<id>jitpack.io</id>
-		<url>https://jitpack.io</url>
-	</repository>
-</repositories>
-```
-```xml
-<dependencies>
-	<dependency>
-		<groupId>com.github.mateimarica</groupId>
-		<artifactId>j-questrade</artifactId>
-		<version>1.3</version>
-	</dependency>
-</dependencies>
-```
-
-<br>
+Just use it as a [git](https://git-scm.com/book/en/v2/Git-Tools-Submodules) [submodule](https://www.atlassian.com/git/tutorials/git-submodule)
 
 ## Documentation
-* [Javadoc](https://javadoc.jitpack.io/com/github/mateimarica/j-questrade/latest/javadoc/)
-* [GitHub Wiki](https://github.com/mateimarica/j-questrade/wiki)
-
-<br>
+* [Javadoc] -- to come
+* [GitHub Wiki] -- to come
 
 ## Disclaimers
 
