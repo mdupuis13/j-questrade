@@ -64,7 +64,7 @@ public class QuestradeImpl implements Questrade {
      * Instructions for getting a refresh token for your Questrade account.</a>
      */
     public QuestradeImpl(String refreshToken, String accessToken, String apiServer) {
-        this.startingAuthorization = new Authorization(refreshToken, accessToken, apiServer);
+//        this.startingAuthorization = new Authorization(refreshToken);
     }
 
     @Override

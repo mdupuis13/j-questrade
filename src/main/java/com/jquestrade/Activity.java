@@ -34,18 +34,16 @@ package com.jquestrade;
  */
 
 public record Activity(String tradeDate,
-					   String transactionDate,
-					   String settlementDate,
-					   String action,
-					   String symbol,
-					   int symbolId,
-					   String description,
-					   String currency,
-					   double quantity,
-					   double price,
-					   double grossAmount,
-					   double commission,
-					   double netAmount,
-					   String type) {
-
-}
+                       String transactionDate,
+                       String settlementDate,
+                       String action,
+                       String symbol,
+                       int symbolId,
+                       String description,
+                       String currency,
+                       double quantity,
+                       double price,
+                       double grossAmount,
+                       double commission,
+                       double netAmount,
+                       String type) {}

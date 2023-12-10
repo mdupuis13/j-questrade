@@ -1,8 +1,5 @@
 package com.jquestrade.client;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * Represents the data that allows an application to make requests the Questrade API.
  *
@@ -15,14 +12,17 @@ import lombok.Getter;
  * @param token_type    The access token type. Is always <b>Bearer</b>
  */
 public record Authorization(String access_token,
-							String api_server,
-							int expires_in,
-							String refresh_token,
+                            String api_server,
+                            int expires_in,
+                            String refresh_token,
                             String token_type) {
-	public Authorization(String access_token,
-						 String api_server,
-						 String refresh_token){
-		this(access_token,api_server,1800,refresh_token,"Bearer");
-	}
+//    public Authorization(String access_token,
+//                         String api_server,
+//                         String refresh_token) {
+//        this(access_token, api_server, 1800, refresh_token, "Bearer");
+//    }
 
-	}
+    public Boolean isValid(){
+        return !(access_token.isBlank() || access_token.isEmpty());
+    }
+}

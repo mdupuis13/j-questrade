@@ -1,0 +1,3 @@
+com.jquestrade:
+  questrade:
+    login-url: "https://login.questrade.com"

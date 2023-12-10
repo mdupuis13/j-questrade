@@ -1,25 +1,48 @@
 package com.jquestrade.client;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
 public class QuestradeWebClientImpl implements QuestradeWebClient {
 
-    private Authorization auth_info;
-    private String accessToken;
-    private String apiServerURL;
-
-    private final String QUESTRADE_URL ="https://login.questrade.com";
-    private final String AUTH_URI = QUESTRADE_URL + "/oauth2/token?grant_type=refresh_token&refresh_token=%s";
+    @Value("${com.jquestrade.questrade.login-url}")
+    private final String QUESTRADE_URL = "";
+    private final WebClient webClient;
+    private Authorization authInfo;
 
     public QuestradeWebClientImpl() {
+
+        webClient = WebClient.builder()
+                .baseUrl(QUESTRADE_URL)
+                .build();
     }
 
     @Override
-    public Authorization authenticate(String refreshToken, String accessToken, String apiServerURL) {
-        this.auth_info = new Authorization(accessToken,apiServerURL,refreshToken);
+    public void authenticate(String refreshToken) {
 
-        return this.auth_info;
+        this.authInfo = webClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/oauth2/token")
+                        .queryParam("grant_type", "refresh_token")
+                        .queryParam("refresh_token", refreshToken)
+                        .build())
+                .retrieve()
+                .onStatus(httpStatus -> !httpStatus.is2xxSuccessful(),
+                        clientResponse -> handleErrorResponse(clientResponse.statusCode(), "Authorization"))
+                .bodyToMono(Authorization.class)
+                .block();
     }
 
-    private <T> T makeCall(String url) {
-        return null;
+    @Override
+    public Boolean isAuthenticated() {
+        return this.authInfo.isValid();
+    }
+
+
+    private Mono<? extends Throwable> handleErrorResponse(HttpStatusCode statusCode, String apiCalled) {
+
+        // Handle non-success status codes here (e.g., logging or custom error handling)
+        return Mono.error(new Exception("Failed to fetch '%s' from Questrade API. Status code: %s".formatted(apiCalled, statusCode)));
     }
 }

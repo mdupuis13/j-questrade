@@ -7,11 +7,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.springframework.test.context.ActiveProfiles;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(InstancioExtension.class)
+@ActiveProfiles("test")
 class QuestradeWebClientImplTest {
 
     @RegisterExtension
@@ -36,14 +38,10 @@ class QuestradeWebClientImplTest {
     @Test
     void givenValidCredentials_WhenITryToAuthenticate_IGetAnAccessToken() {
         String oldRefreshToken = Instancio.create(String.class);
-        String oldAccessToken = Instancio.create(String.class);
-        String oldAPIServerUrl = Instancio.create(String.class);
 
-        Authorization auth = sut.authenticate(oldRefreshToken, oldAccessToken, oldAPIServerUrl);
+        sut.authenticate(oldRefreshToken);
 
-        assertThat(auth.access_token()).isEqualTo(oldAccessToken);
-        assertThat(auth.refresh_token()).isEqualTo(oldRefreshToken);
-        assertThat(auth.api_server()).isEqualTo(oldAPIServerUrl);
+        assertThat(sut.isAuthenticated()).isTrue();
     }
 
 }
