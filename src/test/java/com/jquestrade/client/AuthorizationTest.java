@@ -23,9 +23,8 @@ class AuthorizationTest {
     }
 
     @Test
-    void givenSutHasAValidAccessToken_isValid_isTrue() {
-        Authorization sut = Instancio.of(Authorization.class)
-                                     .create();
+    void givenAValidAccessToken_isValid_isTrue() {
+        Authorization sut = Instancio.create(Authorization.class);
 
         assertThat(sut.isValid()).isTrue();
     }
