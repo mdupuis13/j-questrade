@@ -14,7 +14,7 @@ class AuthorizationTest {
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {" ", "   "})
-    void givenNoAccessToken_isValid_isFalse(String accessToken) {
+    void givenNoAccessToken_isValid_returnsFalse(String accessToken) {
         Authorization sut = Instancio.of(Authorization.class)
                                      .set(field(Authorization::access_token), accessToken)
                                      .create();
@@ -23,7 +23,7 @@ class AuthorizationTest {
     }
 
     @Test
-    void givenAValidAccessToken_isValid_isTrue() {
+    void givenAValidAccessToken_isValid_returnsTrue() {
         Authorization sut = Instancio.create(Authorization.class);
 
         assertThat(sut.isValid()).isTrue();
