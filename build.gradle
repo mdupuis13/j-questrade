@@ -13,7 +13,7 @@ java {
     sourceCompatibility = '21'
 }
 
-group = 'com.jquestrade'
+group = 'info.martindupuis'
 version = '0.0.1-SNAPSHOT'
 
 repositories {
