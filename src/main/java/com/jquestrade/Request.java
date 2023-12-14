@@ -55,7 +55,7 @@ class Request {
         String URL = "";
 
         if (apiServer != null) {
-            URL = apiServer + path.toString();
+            URL = apiServer + path;
         }
 
         URL += path.toString();
