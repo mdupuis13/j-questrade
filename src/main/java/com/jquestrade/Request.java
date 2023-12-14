@@ -4,7 +4,9 @@ import lombok.Setter;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.util.Arrays;
 
 /**
  * Represents an HTTPS request.
@@ -16,48 +18,51 @@ class Request {
     private int parameterCount = 0;
     @Setter
     private RequestMethod requestMethod = RequestMethod.GET;
-    private String path;
+    private final StringBuilder path;
     @Setter
     private String contentType;
     @Setter
     private String apiServer;
 
     Request(String path) {
-        this.path = path;
+        this.path = new StringBuilder(path);
     }
 
 
     void addParameter(String key, String value, String... values) {
-        path += ((parameterCount == 0) ? "?" : "&") + key + "=" + value;
+        this.path.append(parameterCount == 0 ? "?" : "&")
+                 .append(key)
+                 .append("=")
+                 .append(value);
 
-        for (String s : values) {
-            path += "," + s;
+        for (String otherValue : values) {
+            path.append(",")
+                .append(otherValue);
         }
 
         parameterCount++;
     }
 
     void addParameter(String key, int value, int... values) {
-        path += ((parameterCount == 0) ? "?" : "&") + key + "=" + value;
+        String[] valuesAsString = Arrays.stream(values)
+                                        .mapToObj(Integer::toString)
+                                        .toArray(String[]::new);
 
-        for (int j : values) {
-            path += "," + j;
-        }
-
-        parameterCount++;
+        addParameter(key, "%d".formatted(value), valuesAsString);
     }
 
     HttpURLConnection getConnection() throws IOException {
-        String URL;
+        String URL = "";
 
         if (apiServer != null) {
-            URL = apiServer + path;
-        } else {
-            URL = path;
+            URL = apiServer + path.toString();
         }
 
-        HttpURLConnection connection =
-                (HttpURLConnection) new URL(URL).openConnection();
+        URL += path.toString();
+
+        URL url = URI.create(URL).toURL();
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         if (accessToken != null) {
             connection.setRequestProperty("Authorization", "Bearer " + accessToken);
