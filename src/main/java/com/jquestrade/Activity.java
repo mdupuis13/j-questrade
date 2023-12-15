@@ -6,11 +6,12 @@ package com.jquestrade;
  * @param tradeDate       The trade date as a string in ISO 8601 format.
  * @param transactionDate The transaction date as a string in ISO 8601 format.
  * @param settlementDate  The settlement date as a string in ISO 8601 format.
- * @param action          The action.<br>
- *                        <u>Example types:</u><br>
- *                        Buy (for orders)<br>
- *                        Sell (for orders)<br>
- *                        CON (for deposits)
+ * @param action          The action.<br/>
+ *                        <u>Example types:</u><bl>
+ *                        <li>Buy (for orders)</li>
+ *                        <li>Sell (for orders)</li>
+ *                        <li>CON (for deposits)</li>
+ *                        </bl>
  * @param symbol          Returns the stock symbol involved in this activity (if applicable).<br>
  *                        Returns an empty string ({@code ""}) if the activity isn't related to any particular security, like a deposit.
  * @param symbolId        Returns a numeric stock ID for the particular stock involved in this activity (if applicable).<br>
@@ -32,7 +33,6 @@ package com.jquestrade;
  * @see <a href="https://www.questrade.com/api/documentation/rest-operations/account-calls/accounts-id-activities">
  * The activity properties documentation</a>
  */
-
 public record Activity(String tradeDate,
                        String transactionDate,
                        String settlementDate,
