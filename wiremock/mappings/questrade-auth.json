@@ -7,7 +7,7 @@
         "equalTo": "refresh_token"
       },
       "refresh_token": {
-        "equalTo": "my-lone-refresh-token"
+        "matches": ".*"
       }
     }
   },

@@ -1,21 +1,22 @@
 package com.jquestrade.client;
 
+import com.jquestrade.client.config.WebclientProperties;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+
 public class QuestradeWebClientImpl implements QuestradeWebClient {
 
-    @Value("${com.jquestrade.questrade.login-url}")
-    private final String QUESTRADE_URL = "";
     private final WebClient webClient;
     private Authorization authInfo;
 
-    public QuestradeWebClientImpl() {
+    public QuestradeWebClientImpl(WebclientProperties properties) {
 
         webClient = WebClient.builder()
-                .baseUrl(QUESTRADE_URL)
+                .baseUrl(properties.getLoginUrl())
                 .build();
     }
 

@@ -1,3 +1,1 @@
-com.jquestrade:
-  questrade:
-    login-url: "https://login.questrade.com"
+imfo.martindupuis.jquestrade.login-url: "https://login.questrade.com"
