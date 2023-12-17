@@ -9,13 +9,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,7 +37,7 @@ class QuestradeWebClientImplTest {
 
     @BeforeEach
     void setUp() {
-        closeable= MockitoAnnotations.openMocks(this);
+        closeable = MockitoAnnotations.openMocks(this);
 
         Mockito.when(webclientProperties.getLoginUrl()).thenReturn("http://localhost:" + wiremock.getPort());
 
@@ -51,6 +48,7 @@ class QuestradeWebClientImplTest {
     void tearDown() throws Exception {
         closeable.close();
     }
+
     @Test
     void canInstantiate() {
         assertThat(sut).isNotNull();
