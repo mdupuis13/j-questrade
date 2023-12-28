@@ -1,5 +1,6 @@
 package com.jquestrade;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 /**
@@ -13,18 +14,20 @@ import java.time.OffsetDateTime;
  * @param refresh_token The new refresh token, which can be used to generate a new {@code Authorization}.
  * @param token_type    The access token type. Is always <b>Bearer</b>
  */
-public record Authorization(String access_token,
-                            String api_server,
-                            OffsetDateTime expires_at,
-                            String refresh_token,
-                            String token_type) {
+public record AuthenticationToken(String access_token,
+                                  String api_server,
+                                  OffsetDateTime expires_at,
+                                  String refresh_token,
+                                  String token_type) {
 
     /*
      * An authorization is valid if:
      *      * an access_token has been given, and is not blank or an empty string
-     *      *
+     *      * the expiration date-time has not passed
      */
     public Boolean isValid() {
-        return !(access_token == null || access_token.isBlank() || access_token.isEmpty());
+        boolean dateExpired = LocalDateTime.now().isAfter(expires_at.toLocalDateTime());
+
+        return !(dateExpired || access_token == null || access_token.isBlank() || access_token.isEmpty());
     }
 }
