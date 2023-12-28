@@ -1,6 +1,5 @@
 package com.jquestrade;
 
-import com.jquestrade.client.Authorization;
 import com.jquestrade.exceptions.ArgumentException;
 import com.jquestrade.exceptions.RefreshTokenException;
 import com.jquestrade.exceptions.StatusCodeException;

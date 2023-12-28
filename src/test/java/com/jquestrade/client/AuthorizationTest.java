@@ -29,4 +29,14 @@ class AuthorizationTest {
         assertThat(sut.isValid()).isTrue();
     }
 
+    @Test
+    void givenAuthValid_andTimeNotExpired_isValid_returnsTrue() {
+        Authorization sut = Instancio.of(Authorization.class)
+//                .set(all(LocalDateTime.class), LocalDateTime.now())
+                                     .set(field(Authorization::expires_in), 120)
+                                     .create();
+
+        assertThat(sut.isValid()).isTrue();
+    }
+
 }

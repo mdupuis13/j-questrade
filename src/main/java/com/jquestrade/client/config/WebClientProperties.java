@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Configuration
 @ConfigurationProperties(prefix = "info.martindupuis.jquestrade")
-public class WebclientProperties {
+public class WebClientProperties {
     private final String loginUrl;
 
-    public WebclientProperties(@Value("${imfo.martindupuis.jquestrade.login-url}") final String loginUrl) {
+    public WebClientProperties(@Value("${imfo.martindupuis.jquestrade.login-url}") final String loginUrl) {
         this.loginUrl = loginUrl;
     }
 }

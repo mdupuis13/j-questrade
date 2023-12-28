@@ -1,7 +1,7 @@
 package com.jquestrade.client;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import com.jquestrade.client.config.WebclientProperties;
+import com.jquestrade.client.config.WebClientProperties;
 import org.instancio.Instancio;
 import org.instancio.junit.InstancioExtension;
 import org.junit.jupiter.api.AfterEach;
@@ -29,7 +29,7 @@ class QuestradeWebClientImplTest {
 
 
     @Mock
-    WebclientProperties webclientProperties;
+    WebClientProperties webclientProperties;
 
     QuestradeWebClient sut;
 

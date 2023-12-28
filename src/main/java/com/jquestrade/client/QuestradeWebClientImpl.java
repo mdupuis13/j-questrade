@@ -1,47 +1,46 @@
 package com.jquestrade.client;
 
-import com.jquestrade.client.config.WebclientProperties;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import com.jquestrade.client.config.WebClientProperties;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClient;
+
+import java.time.OffsetDateTime;
 
 
 public class QuestradeWebClientImpl implements QuestradeWebClient {
 
-    private final WebClient webClient;
-    private Authorization authInfo;
+    private final RestClient apiClient;
 
-    public QuestradeWebClientImpl(WebclientProperties properties) {
+    public QuestradeWebClientImpl(WebClientProperties properties) {
 
-        webClient = WebClient.builder()
-                             .baseUrl(properties.getLoginUrl())
-                             .build();
+        apiClient = RestClient.create(properties.getLoginUrl());
+    }
+
+    private static com.jquestrade.Authorization getAuthorization(ResponseEntity<Authorization> response) {
+        Authorization clientAuth = response.getBody();
+
+        String dateHeader = response.getHeaders().getFirst("date");
+        OffsetDateTime expiresAt = getExpirationDate(dateHeader, clientAuth.expires_in());
+
+        return new com.jquestrade.Authorization(clientAuth.access_token(), clientAuth.api_server(), expiresAt, clientAuth.refresh_token(), clientAuth.token_type());
+    }
+
+    private static OffsetDateTime getExpirationDate(String dateHeader, Authorization clientAuth) {
+        return OffsetDateTime.parse(dateHeader)
+                             .plusMinutes(clientAuth.expires_in());
     }
 
     @Override
-    public void authenticate(String refreshToken) {
+    public com.jquestrade.Authorization authenticate(String refreshToken) {
 
-        this.authInfo = webClient.get()
-                                 .uri(uriBuilder -> uriBuilder.path("/oauth2/token")
-                                                              .queryParam("grant_type", "refresh_token")
-                                                              .queryParam("refresh_token", refreshToken)
-                                                              .build())
-                                 .retrieve()
-                                 .onStatus(httpStatus -> !httpStatus.is2xxSuccessful(),
-                                           clientResponse -> handleErrorResponse(clientResponse.statusCode(), "Authorization"))
-                                 .bodyToMono(Authorization.class)
-                                 .block();
-    }
+        ResponseEntity<Authorization> response = apiClient.get()
+                                                          .uri(uriBuilder -> uriBuilder.path("/oauth2/token")
+                                                                                       .queryParam("grant_type", "refresh_token")
+                                                                                       .queryParam("refresh_token", refreshToken)
+                                                                                       .build())
+                                                          .retrieve()
+                                                          .toEntity(Authorization.class);
 
-    @Override
-    public Boolean isAuthenticated() {
-        return this.authInfo.isValid();
-    }
-
-
-    private Mono<? extends Throwable> handleErrorResponse(HttpStatusCode statusCode, String apiCalled) {
-
-        // Handle non-success status codes here (e.g., logging or custom error handling)
-        return Mono.error(new Exception("Failed to fetch '%s' from Questrade API. Status code: %s".formatted(apiCalled, statusCode)));
+        return getAuthorization(response);
     }
 }
