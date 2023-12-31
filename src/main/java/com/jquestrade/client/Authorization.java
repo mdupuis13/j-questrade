@@ -16,13 +16,4 @@ record Authorization(String access_token,
                      int expires_in,
                      String refresh_token,
                      String token_type) {
-
-    /*
-     * An authorization is valid if:
-     *      * an access_token has been given, and is not blank or an empty string
-     *      *
-     */
-    public Boolean isValid(){
-        return  !(access_token == null || access_token.isBlank() || access_token.isEmpty());
-    }
 }
