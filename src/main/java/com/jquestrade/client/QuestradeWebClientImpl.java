@@ -1,10 +1,14 @@
 package com.jquestrade.client;
 
+import com.jquestrade.AuthenticationToken;
 import com.jquestrade.client.config.WebClientProperties;
+import com.jquestrade.exceptions.AuthenticationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 
 public class QuestradeWebClientImpl implements QuestradeWebClient {
@@ -16,22 +20,27 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
         apiClient = RestClient.create(properties.getLoginUrl());
     }
 
-    private static com.jquestrade.Authorization getAuthorization(ResponseEntity<Authorization> response) {
+    private static AuthenticationToken createAuthenticationObject(ResponseEntity<Authorization> response) {
         Authorization clientAuth = response.getBody();
 
-        String dateHeader = response.getHeaders().getFirst("date");
-        OffsetDateTime expiresAt = getExpirationDate(dateHeader, clientAuth.expires_in());
+        if (clientAuth == null)
+            throw new AuthenticationException("Cannot retrieve auth token");
 
-        return new com.jquestrade.Authorization(clientAuth.access_token(), clientAuth.api_server(), expiresAt, clientAuth.refresh_token(), clientAuth.token_type());
+        String dateHeader = response.getHeaders().getFirst("date");
+        OffsetDateTime expiresAt = getExpirationDate(dateHeader, clientAuth);
+
+        return new AuthenticationToken(clientAuth.access_token(), clientAuth.api_server(), expiresAt, clientAuth.refresh_token(), clientAuth.token_type());
     }
 
     private static OffsetDateTime getExpirationDate(String dateHeader, Authorization clientAuth) {
+        ZoneOffset currentZone = ZoneOffset.systemDefault().getRules().getOffset(LocalDateTime.now());
+
         return OffsetDateTime.parse(dateHeader)
-                             .plusMinutes(clientAuth.expires_in());
+                             .plusMinutes(clientAuth.expires_in()).withOffsetSameLocal(currentZone);
     }
 
     @Override
-    public com.jquestrade.Authorization authenticate(String refreshToken) {
+    public AuthenticationToken authenticate(String refreshToken) {
 
         ResponseEntity<Authorization> response = apiClient.get()
                                                           .uri(uriBuilder -> uriBuilder.path("/oauth2/token")
@@ -41,6 +50,7 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
                                                           .retrieve()
                                                           .toEntity(Authorization.class);
 
-        return getAuthorization(response);
+        return createAuthenticationObject(response);
     }
+
 }
