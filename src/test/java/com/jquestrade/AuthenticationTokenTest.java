@@ -28,7 +28,9 @@ class AuthenticationTokenTest {
 
     @Test
     void givenAValidAccessToken_isValid_returnsTrue() {
-        AuthenticationToken sut = Instancio.create(AuthenticationToken.class);
+        AuthenticationToken sut = Instancio.of(AuthenticationToken.class)
+                                           .generate(field("expires_at"), gen -> gen.temporal().offsetDateTime().future())
+                                           .create();
 
         assertThat(sut.isValid()).isTrue();
     }
