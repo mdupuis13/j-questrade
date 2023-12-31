@@ -1,7 +1,8 @@
 package com.jquestrade.client;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import com.jquestrade.client.config.WebclientProperties;
+import com.jquestrade.AuthenticationToken;
+import com.jquestrade.client.config.WebClientProperties;
 import org.instancio.Instancio;
 import org.instancio.junit.InstancioExtension;
 import org.junit.jupiter.api.AfterEach;
@@ -29,7 +30,7 @@ class QuestradeWebClientImplTest {
 
 
     @Mock
-    WebclientProperties webclientProperties;
+    WebClientProperties webclientProperties;
 
     QuestradeWebClient sut;
 
@@ -58,9 +59,9 @@ class QuestradeWebClientImplTest {
     void givenValidCredentials_WhenITryToAuthenticate_IGetAnAccessToken() {
         String oldRefreshToken = Instancio.create(String.class);
 
-        sut.authenticate(oldRefreshToken);
+        AuthenticationToken token = sut.authenticate(oldRefreshToken);
 
-        assertThat(sut.isAuthenticated()).isTrue();
+        assertThat(token.isValid()).isTrue();
     }
 
 }

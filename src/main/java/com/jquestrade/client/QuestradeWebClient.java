@@ -1,6 +1,7 @@
 package com.jquestrade.client;
 
+import com.jquestrade.AuthenticationToken;
+
 public interface QuestradeWebClient {
-    void authenticate(String refreshToken);
-    Boolean isAuthenticated();
+    AuthenticationToken authenticate(String refreshToken);
 }
