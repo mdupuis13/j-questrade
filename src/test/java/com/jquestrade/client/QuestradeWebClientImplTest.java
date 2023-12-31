@@ -63,5 +63,4 @@ class QuestradeWebClientImplTest {
 
         assertThat(token.isValid()).isTrue();
     }
-
 }

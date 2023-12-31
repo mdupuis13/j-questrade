@@ -26,6 +26,20 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
         apiClient = RestClient.create(properties.getLoginUrl());
     }
 
+    @Override
+    public AuthenticationToken authenticate(String refreshToken) {
+
+        ResponseEntity<Authorization> response = apiClient.get()
+                                                          .uri(uriBuilder -> uriBuilder.path("/oauth2/token")
+                                                                                       .queryParam("grant_type", "refresh_token")
+                                                                                       .queryParam("refresh_token", refreshToken)
+                                                                                       .build())
+                                                          .retrieve()
+                                                          .toEntity(Authorization.class);
+
+        return createAuthenticationObject(response);
+    }
+
     private AuthenticationToken createAuthenticationObject(ResponseEntity<Authorization> response) {
         Authorization clientAuth = response.getBody();
 
@@ -48,18 +62,5 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
                          .withOffsetSameLocal(currentZone);
     }
 
-    @Override
-    public AuthenticationToken authenticate(String refreshToken) {
-
-        ResponseEntity<Authorization> response = apiClient.get()
-                                                          .uri(uriBuilder -> uriBuilder.path("/oauth2/token")
-                                                                                       .queryParam("grant_type", "refresh_token")
-                                                                                       .queryParam("refresh_token", refreshToken)
-                                                                                       .build())
-                                                          .retrieve()
-                                                          .toEntity(Authorization.class);
-
-        return createAuthenticationObject(response);
-    }
 
 }
