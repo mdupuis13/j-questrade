@@ -8,23 +8,28 @@ import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 
 public class QuestradeWebClientImpl implements QuestradeWebClient {
 
     private final RestClient apiClient;
 
+    private final DateTimeFormatter DATE_HEADER_FORMAT_NY = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+    private final ZoneId ZONE_NY = ZoneId.of("America/New_York");
+
     public QuestradeWebClientImpl(WebClientProperties properties) {
 
         apiClient = RestClient.create(properties.getLoginUrl());
     }
 
-    private static AuthenticationToken createAuthenticationObject(ResponseEntity<Authorization> response) {
+    private AuthenticationToken createAuthenticationObject(ResponseEntity<Authorization> response) {
         Authorization clientAuth = response.getBody();
 
-        if (clientAuth == null)
-            throw new AuthenticationException("Cannot retrieve auth token");
+        if (clientAuth == null) throw new AuthenticationException("Cannot retrieve auth token");
 
         String dateHeader = response.getHeaders().getFirst("date");
         OffsetDateTime expiresAt = getExpirationDate(dateHeader, clientAuth);
@@ -32,11 +37,15 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
         return new AuthenticationToken(clientAuth.access_token(), clientAuth.api_server(), expiresAt, clientAuth.refresh_token(), clientAuth.token_type());
     }
 
-    private static OffsetDateTime getExpirationDate(String dateHeader, Authorization clientAuth) {
+    private OffsetDateTime getExpirationDate(String dateHeader, Authorization clientAuth) {
         ZoneOffset currentZone = ZoneOffset.systemDefault().getRules().getOffset(LocalDateTime.now());
 
-        return OffsetDateTime.parse(dateHeader)
-                             .plusMinutes(clientAuth.expires_in()).withOffsetSameLocal(currentZone);
+        OffsetDateTime dateParsed = LocalDateTime.parse(dateHeader, DATE_HEADER_FORMAT_NY)
+                                                 .atZone(ZONE_NY)
+                                                 .toOffsetDateTime();
+
+        return dateParsed.plusSeconds(clientAuth.expires_in())
+                         .withOffsetSameLocal(currentZone);
     }
 
     @Override
