@@ -38,8 +38,21 @@ Just use it as a [git](https://git-scm.com/book/en/v2/Git-Tools-Submodules) [sub
 * [Javadoc] -- to come
 * [GitHub Wiki] -- to come
 
+## Third-party libraries used
+
+### JUnit Pioneer
+**Website**: https://junit-pioneer.org
+
+**What it's used for ?**<br />
+In tests only, for testing timezone conversion of Questrade's dater header response. 
+
+### Project Lombok
+**Website**: https://projectlombok.org
+
+**What it's used for ?**<br />
+Reduce boilerplate code.
+
 ## Disclaimers
 
 * This library is not affiliated, maintained, authorized, or endorsed by Questrade.
-
 * This library has not been heavily tested. Use at your own risk.
