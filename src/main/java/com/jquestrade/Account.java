@@ -12,4 +12,9 @@ package com.jquestrade;
  * @see <a href="https://www.questrade.com/api/documentation/rest-operations/account-calls/accounts">
  * The account properties documentation</a>
  */
-public record Account(String type, String number, String status, boolean isPrimary, boolean isBilling, String clientAccountType) {}
+public record Account(String type,
+                      String number,
+                      String status,
+                      boolean isPrimary,
+                      boolean isBilling,
+                      String clientAccountType) {}

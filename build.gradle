@@ -2,18 +2,18 @@ import org.springframework.boot.gradle.plugin.SpringBootPlugin
 
 plugins {
     id 'java'
+
     id 'io.freefair.lombok' version '8.4'
 
-    id 'org.springframework.boot' version '3.1.4' apply false
+    id 'org.springframework.boot' version '3.2.1' apply false
     id 'io.spring.dependency-management' version '1.1.4'
-
 }
 
 java {
-    sourceCompatibility = '17'
+    sourceCompatibility = '21'
 }
 
-group = 'com.jquestrade'
+group = 'info.martindupuis'
 version = '0.0.1-SNAPSHOT'
 
 repositories {
@@ -29,6 +29,7 @@ dependencyManagement {
 dependencies {
     implementation(
             'org.springframework.boot:spring-boot-starter',
+            'org.springframework.boot:spring-boot-starter-web',
 
             'com.google.code.gson:gson:2.8.9',
             'org.projectlombok:lombok:1.18.28'
@@ -37,7 +38,14 @@ dependencies {
     testImplementation(
             'org.springframework.boot:spring-boot-starter-test',
 
+            'org.junit.jupiter:junit-jupiter:5.9.2',
+            'org.instancio:instancio-junit:3.6.0',
+
             'org.wiremock:wiremock-standalone:3.3.1'
+    )
+
+    testRuntimeOnly(
+            'org.junit.platform:junit-platform-launcher'
     )
 }
 
