@@ -40,7 +40,7 @@ dependencies {
 
             'org.junit.jupiter:junit-jupiter:5.9.2',
             'org.instancio:instancio-junit:3.6.0',
-
+            'org.junit-pioneer:junit-pioneer:2.2.0',
             'org.wiremock:wiremock-standalone:3.3.1'
     )
 
