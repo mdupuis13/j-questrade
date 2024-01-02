@@ -27,17 +27,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class QuestradeWebClientImplTest {
 
+
+    // It appears that Questrade always expires the token in 1800 seconds (30 minutes)
+    // add a buffer for test execution time between wiremock response and code
+    private static final short DEFAULT_TIMEOUT_SECONDS = 1801;
+
     @RegisterExtension
     static WireMockExtension wiremock =
             WireMockExtension.newInstance()
                              .options(wireMockConfig().usingFilesUnderDirectory("wiremock")
                              ).build();
 
+    private static final String TEST_URL = "http://localhost:%d";
+    // Use this URL to test a real call (use sparingly, it's rate limited)
+//    private static final String TEST_URL = "https://login.questrade.com";
+
+    QuestradeWebClient sut;
 
     @Mock
     WebClientProperties webclientProperties;
-
-    QuestradeWebClient sut;
 
     private AutoCloseable closeable;
 
@@ -45,7 +53,7 @@ class QuestradeWebClientImplTest {
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
 
-        Mockito.when(webclientProperties.getLoginUrl()).thenReturn("http://localhost:" + wiremock.getPort());
+        Mockito.when(webclientProperties.getLoginUrl()).thenReturn(TEST_URL.formatted(wiremock.getPort()));
 
         sut = new QuestradeWebClientImpl(webclientProperties);
     }
@@ -66,18 +74,19 @@ class QuestradeWebClientImplTest {
 
         AuthenticationToken token = sut.authenticate(oldRefreshToken);
 
+        log.info(token.toString());
         assertThat(token.isValid()).isTrue();
     }
 
     @Test
     @DefaultTimeZone("PST")
-    void givenIAmAuthenticated_WhenReadTheExpirationDate_ItIsInMyTimeZone() {
+    void givenIAmAuthenticated_WhenReadTheExpirationDate_ItIsInMyTimeZone_PSTisUsedToTest() {
         // change JVM timezone for this specific test to Pacific Time
         // the date should be between 2 and 3 hours later than the wiremock
         String oldRefreshToken = Instancio.create(String.class);
 
         AuthenticationToken token = sut.authenticate(oldRefreshToken);
 
-        assertThat(token.expires_at()).isAfterOrEqualTo(OffsetDateTime.now());
+        assertThat(token.expires_at()).isBeforeOrEqualTo(OffsetDateTime.now().plusSeconds(DEFAULT_TIMEOUT_SECONDS));
     }
 }
