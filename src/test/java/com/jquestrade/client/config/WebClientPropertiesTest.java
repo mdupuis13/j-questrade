@@ -18,6 +18,6 @@ class WebClientPropertiesTest {
 
     @Test
     void givenUserDefinedPOJO_whenBindingPropertiesFile_thenAllFieldsAreSet() {
-        assertThat(webClientProperties.getLoginUrl()).isEqualTo("test login url");
+        assertThat(webClientProperties.getLoginUrl()).isEqualTo("http://www.test-url.com");
     }
 }
