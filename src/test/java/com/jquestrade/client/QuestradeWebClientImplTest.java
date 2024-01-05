@@ -39,6 +39,7 @@ class QuestradeWebClientImplTest {
     private static final short NB_ACCOUNTS = 2;
     private static final String ACCESS_TOKEN = "my-access-token-123";
     private static final String TEST_URL_TEMPLATE = "http://localhost:%d";
+
     @RegisterExtension
     static WireMockExtension wiremock =
             WireMockExtension.newInstance()
@@ -48,6 +49,7 @@ class QuestradeWebClientImplTest {
 
     // Use this URL to test a real call (use sparingly, it's rate limited)
 //    private static final String TEST_URL = "https://login.questrade.com";
+
     @Mock
     WebClientProperties webclientProperties;
     private String testServerUrl;
