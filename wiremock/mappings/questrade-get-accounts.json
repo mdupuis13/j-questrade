@@ -35,8 +35,9 @@
     "transformers": ["response-template"],
     "headers": {
       "Content-Type": "application/json; charset=utf-8",
-      "date": "{{now format='EEE, dd MMM yyyy HH:mm:ss z'}}",
-      "x-ratelimit-remaining": "29999"
+      "date": "{{now timezone='Europe/London' format='EEE, dd MMM yyyy HH:mm:ss z'}}",
+      "X-RateLimit-Remaining": "29999",
+      "X-RateLimit-Reset": "1300286940"
     }
   }
 }
