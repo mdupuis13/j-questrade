@@ -1,0 +1,37 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/v1/markets/candles/38738?startTime=2014-10-01T00:00:00-05:00&endTime=2014-10-20T23:59:59-05:00&interval=OneDay",
+    "headers": {
+      "Authorization": {
+        "contains": "Bearer my-access-token-123"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "candles": [
+        {
+          "start": "2014-01-02T00:00:00.000000-05:00",
+          "end": "2014-01-03T00:00:00.000000-05:00",
+          "low": 70.3,
+          "high": 70.78,
+          "open": 70.68,
+          "close": 70.73,
+          "volume": 983609
+        }
+      ],
+      "userId": 999123
+    },
+    "transformers": [
+      "response-template"
+    ],
+    "headers": {
+      "Content-Type": "application/json; charset=utf-8",
+      "date": "{{now timezone='Europe/London' format='EEE, dd MMM yyyy HH:mm:ss z'}}",
+      "X-RateLimit-Remaining": "29999",
+      "X-RateLimit-Reset": "1300286940"
+    }
+  }
+}

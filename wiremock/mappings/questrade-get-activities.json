@@ -1,0 +1,44 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/v1/accounts/26598145/activities?startTime=2011-02-01T00:00:00-05:00&endTime=2011-02-28T00:00:00-05:00&",
+    "headers": {
+      "Authorization": {
+        "contains": "Bearer my-access-token-123"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "activities": [
+        {
+          "tradeDate": "2011-02-16T00:00:00.000000-05:00",
+          "transactionDate": "2011-02-16T00:00:00.000000-05:00",
+          "settlementDate":  "2011-02-16T00:00:00.000000-05:00",
+          "action": "",
+          "symbol":  "",
+          "symbolId": 0,
+          "description": "INT FR 02/04 THRU02/15@ 4 3/4%BAL 205,006 AVBAL 204,966",
+          "currency": "USD",
+          "quantity": 0,
+          "price":  0,
+          "grossAmount":  0,
+          "commission":  0,
+          "netAmount": -320.08,
+          "type": "Interest"
+        }
+      ],
+      "userId": 999123
+    },
+    "transformers": [
+      "response-template"
+    ],
+    "headers": {
+      "Content-Type": "application/json; charset=utf-8",
+      "date": "{{now timezone='Europe/London' format='EEE, dd MMM yyyy HH:mm:ss z'}}",
+      "X-RateLimit-Remaining": "29999",
+      "X-RateLimit-Reset": "1300286940"
+    }
+  }
+}

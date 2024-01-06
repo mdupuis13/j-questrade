@@ -1,0 +1,41 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/v1/{account}/positions",
+    "headers": {
+      "Authorization": {
+        "contains": "Bearer my-access-token-123"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "positions": [
+        {
+          "symbol": "THI.TO",
+          "symbolId": 38738,
+          "openQuantity": 100,
+          "currentMarketValue": 6017,
+          "currentPrice": 60.17,
+          "averageEntryPrice": 60.23,
+          "closedPnl": 0,
+          "openPnl": -6,
+          "totalCost": false,
+          "isRealTime": "Individual",
+          "isUnderReorg": false
+        }
+      ],
+      "userId": 999123
+    },
+    "transformers": [
+      "response-template"
+    ],
+    "headers": {
+      "Content-Type": "application/json; charset=utf-8",
+      "date": "{{now timezone='Europe/London' format='EEE, dd MMM yyyy HH:mm:ss z'}}",
+      "X-RateLimit-Remaining": "29999",
+      "X-RateLimit-Reset": "1300286940"
+    }
+  }
+}

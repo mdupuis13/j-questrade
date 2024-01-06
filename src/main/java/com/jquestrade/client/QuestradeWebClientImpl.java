@@ -19,8 +19,10 @@ import java.util.Locale;
 @Slf4j
 public class QuestradeWebClientImpl implements QuestradeWebClient {
 
+    public static final String API_V1_TEMPLATE = "%s/v1/%s";
+    private static final DateTimeFormatter DATE_HEADER_FORMAT = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+
     private final RestClient authenticationClient;
-    private final DateTimeFormatter DATE_HEADER_FORMAT = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
     private final RestClient apiClient;
 
     public QuestradeWebClientImpl(WebClientProperties properties) {
@@ -32,6 +34,7 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
     @Override
     public AuthenticationToken authenticate(String refreshToken) {
         log.info("QuestradeWebClient: Calling Questrade API with refresh token: {}", refreshToken);
+
         ResponseEntity<Authorization> response = authenticationClient.get()
                                                                      .uri(uriBuilder -> uriBuilder.path("/oauth2/token")
                                                                                                   .queryParam("grant_type", "refresh_token")
@@ -46,13 +49,18 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
     @Override
     public List<Account> getAccounts(AuthenticationToken authToken) {
         log.info("QuestradeWebClient: Calling Questrade API getAccounts()");
-        ResponseEntity<AccountResponse> response = apiClient.get()
-                                                            .uri(authToken.api_server() + "/v1/accounts")
-                                                            .header("Authorization", "Bearer %s".formatted(authToken.access_token()))
-                                                            .retrieve()
-                                                            .toEntity(AccountResponse.class);
+        ResponseEntity<AccountResponse> response = callQuestrade(authToken, "accounts");
 
         return response.getBody().accounts();
+    }
+
+    private ResponseEntity<AccountResponse> callQuestrade(AuthenticationToken authToken, String ressource) {
+
+        return apiClient.get()
+                        .uri(API_V1_TEMPLATE.formatted(authToken.api_server(), ressource))
+                        .header("Authorization", "Bearer %s".formatted(authToken.access_token()))
+                        .retrieve()
+                        .toEntity(AccountResponse.class);
     }
 
     private AuthenticationToken createAuthenticationObject(ResponseEntity<Authorization> response) {
