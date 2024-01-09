@@ -8,19 +8,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 
 @Slf4j
 public class QuestradeWebClientImpl implements QuestradeWebClient {
 
     public static final String API_V1_TEMPLATE = "%s/v1/%s";
-    private static final DateTimeFormatter DATE_HEADER_FORMAT = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+
 
     private final RestClient authenticationClient;
     private final RestClient apiClient;
@@ -71,18 +66,13 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
 
         String dateHeader = response.getHeaders().getFirst("date");
         OffsetDateTime expiresAt = getExpirationDate(dateHeader, clientAuth);
-        log.info("QuestradeWebClient: Date received from header: '{}'    local expiration date: {}", dateHeader, expiresAt);
 
         return new AuthenticationToken(clientAuth.access_token(), clientAuth.api_server(), expiresAt, clientAuth.refresh_token(), clientAuth.token_type());
     }
 
     private OffsetDateTime getExpirationDate(String dateHeader, Authorization clientAuth) {
-        ZoneOffset currentZone = ZoneOffset.systemDefault().getRules().getOffset(LocalDateTime.now());
+        OffsetDateTime localDate = DateUtils.parseHeaderDateToLocalOffsetDateTime(dateHeader);
 
-        ZonedDateTime dateParsed = ZonedDateTime.parse(dateHeader, DATE_HEADER_FORMAT);
-        ZonedDateTime localDate = dateParsed.withZoneSameInstant(currentZone);
-
-        return localDate.plusSeconds(clientAuth.expires_in())
-                        .toOffsetDateTime();
+        return localDate.plusSeconds(clientAuth.expires_in());
     }
 }

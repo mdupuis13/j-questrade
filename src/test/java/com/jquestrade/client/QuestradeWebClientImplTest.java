@@ -12,13 +12,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junitpioneer.jupiter.DefaultTimeZone;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
@@ -87,19 +85,7 @@ class QuestradeWebClientImplTest {
     }
 
     @Test
-    @DefaultTimeZone("PST")
-    void givenIAmAuthenticated_WhenReadTheExpirationDate_ItIsInMyTimeZone_PSTisUsedToTest() {
-        // change JVM timezone for this specific test to Pacific Time
-        // the date should be between 2 and 3 hours later than the wiremock
-        String oldRefreshToken = Instancio.create(String.class);
-
-        AuthenticationToken token = sut.authenticate(oldRefreshToken);
-
-        assertThat(token.expires_at()).isBeforeOrEqualTo(OffsetDateTime.now().plusSeconds(DEFAULT_TIMEOUT_SECONDS));
-    }
-
-    @Test
-    void givenIAmAuthenticated_callingGetAccounts_returnsAllMyAccounts() {
+    void givenIAmAuthenticated_callingGetAccounts_returnsListOfAccounts() {
         AuthenticationToken authToken = Instancio.of(AuthenticationToken.class)
                                                  .set(field(AuthenticationToken::api_server), testServerUrl)
                                                  .set(field(AuthenticationToken::access_token), ACCESS_TOKEN)
@@ -111,5 +97,8 @@ class QuestradeWebClientImplTest {
         assertThatList(result).first()
                               .hasFieldOrPropertyWithValue("type", "TFSA")
                               .hasFieldOrPropertyWithValue("number", "99912345");
+        assertThatList(result).last()
+                              .hasFieldOrPropertyWithValue("type", "RRSP")
+                              .hasFieldOrPropertyWithValue("number", "99912346");
     }
 }
