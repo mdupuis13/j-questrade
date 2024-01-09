@@ -1,5 +1,6 @@
 package com.jquestrade.client;
 
+import com.jquestrade.Account;
 import com.jquestrade.AuthenticationToken;
 import com.jquestrade.client.config.WebClientProperties;
 import com.jquestrade.exceptions.AuthenticationException;
@@ -7,34 +8,54 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 
-import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
+import java.time.OffsetDateTime;
+import java.util.List;
 
 @Slf4j
 public class QuestradeWebClientImpl implements QuestradeWebClient {
 
-    private final RestClient apiClient;
+    public static final String API_V1_TEMPLATE = "%s/v1/%s";
 
-    private final DateTimeFormatter DATE_HEADER_FORMAT = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+
+    private final RestClient authenticationClient;
+    private final RestClient apiClient;
 
     public QuestradeWebClientImpl(WebClientProperties properties) {
 
-        apiClient = RestClient.create(properties.getLoginUrl());
+        authenticationClient = RestClient.create(properties.getLoginUrl());
+        apiClient = RestClient.create();
     }
 
     @Override
     public AuthenticationToken authenticate(String refreshToken) {
         log.info("QuestradeWebClient: Calling Questrade API with refresh token: {}", refreshToken);
-        ResponseEntity<Authorization> response = apiClient.get()
-                                                          .uri(uriBuilder -> uriBuilder.path("/oauth2/token")
-                                                                                       .queryParam("grant_type", "refresh_token")
-                                                                                       .queryParam("refresh_token", refreshToken)
-                                                                                       .build())
-                                                          .retrieve()
-                                                          .toEntity(Authorization.class);
+
+        ResponseEntity<Authorization> response = authenticationClient.get()
+                                                                     .uri(uriBuilder -> uriBuilder.path("/oauth2/token")
+                                                                                                  .queryParam("grant_type", "refresh_token")
+                                                                                                  .queryParam("refresh_token", refreshToken)
+                                                                                                  .build())
+                                                                     .retrieve()
+                                                                     .toEntity(Authorization.class);
 
         return createAuthenticationObject(response);
+    }
+
+    @Override
+    public List<Account> getAccounts(AuthenticationToken authToken) {
+        log.info("QuestradeWebClient: Calling Questrade API getAccounts()");
+        ResponseEntity<AccountResponse> response = callQuestrade(authToken, "accounts");
+
+        return response.getBody().accounts();
+    }
+
+    private ResponseEntity<AccountResponse> callQuestrade(AuthenticationToken authToken, String ressource) {
+
+        return apiClient.get()
+                        .uri(API_V1_TEMPLATE.formatted(authToken.api_server(), ressource))
+                        .header("Authorization", "Bearer %s".formatted(authToken.access_token()))
+                        .retrieve()
+                        .toEntity(AccountResponse.class);
     }
 
     private AuthenticationToken createAuthenticationObject(ResponseEntity<Authorization> response) {
@@ -45,18 +66,13 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
 
         String dateHeader = response.getHeaders().getFirst("date");
         OffsetDateTime expiresAt = getExpirationDate(dateHeader, clientAuth);
-        log.info("QuestradeWebClient: Date received from header: '{}'    local expiration date: {}", dateHeader, expiresAt);
 
         return new AuthenticationToken(clientAuth.access_token(), clientAuth.api_server(), expiresAt, clientAuth.refresh_token(), clientAuth.token_type());
     }
 
     private OffsetDateTime getExpirationDate(String dateHeader, Authorization clientAuth) {
-        ZoneOffset currentZone = ZoneOffset.systemDefault().getRules().getOffset(LocalDateTime.now());
+        OffsetDateTime localDate = DateUtils.parseHeaderDateToLocalOffsetDateTime(dateHeader);
 
-        ZonedDateTime dateParsed = ZonedDateTime.parse(dateHeader, DATE_HEADER_FORMAT);
-        ZonedDateTime localDate = dateParsed.withZoneSameInstant(currentZone);
-
-        return localDate.plusSeconds(clientAuth.expires_in())
-                        .toOffsetDateTime();
+        return localDate.plusSeconds(clientAuth.expires_in());
     }
 }

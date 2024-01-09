@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/v1/accounts",
+    "urlPath": "/v1/{account}/positions",
     "headers": {
       "Authorization": {
         "contains": "Bearer my-access-token-123"
@@ -11,22 +11,19 @@
   "response": {
     "status": 200,
     "jsonBody": {
-      "accounts": [
+      "positions": [
         {
-          "type": "TFSA",
-          "number": "99912345",
-          "status": "Active",
-          "isPrimary": true,
-          "isBilling": true,
-          "clientAccountType": "Individual"
-        },
-        {
-          "type": "RRSP",
-          "number": "99912346",
-          "status": "Active",
-          "isPrimary": false,
-          "isBilling": false,
-          "clientAccountType": "Individual"
+          "symbol": "THI.TO",
+          "symbolId": 38738,
+          "openQuantity": 100,
+          "currentMarketValue": 6017,
+          "currentPrice": 60.17,
+          "averageEntryPrice": 60.23,
+          "closedPnl": 0,
+          "openPnl": -6,
+          "totalCost": false,
+          "isRealTime": "Individual",
+          "isUnderReorg": false
         }
       ],
       "userId": 999123
