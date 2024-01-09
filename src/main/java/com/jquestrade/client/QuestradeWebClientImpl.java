@@ -32,13 +32,13 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
     public AuthenticationToken authenticate(String refreshToken) {
         log.info("QuestradeWebClient: Calling Questrade API with refresh token: {}", refreshToken);
 
-        ResponseEntity<Authorization> response = authenticationClient.get()
-                                                                     .uri(uriBuilder -> uriBuilder.path("/oauth2/token")
+        ResponseEntity<AuthorizationResponse> response = authenticationClient.get()
+                                                                             .uri(uriBuilder -> uriBuilder.path("/oauth2/token")
                                                                                                   .queryParam("grant_type", "refresh_token")
                                                                                                   .queryParam("refresh_token", refreshToken)
                                                                                                   .build())
-                                                                     .retrieve()
-                                                                     .toEntity(Authorization.class);
+                                                                             .retrieve()
+                                                                             .toEntity(AuthorizationResponse.class);
 
         return createAuthenticationObject(response);
     }
@@ -69,9 +69,9 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
                         .retrieve();
     }
 
-    private AuthenticationToken createAuthenticationObject(ResponseEntity<Authorization> response) {
+    private AuthenticationToken createAuthenticationObject(ResponseEntity<AuthorizationResponse> response) {
         log.info("QuestradeWebClient: Creating authentication object from API answer");
-        Authorization clientAuth = response.getBody();
+        AuthorizationResponse clientAuth = response.getBody();
 
         if (clientAuth == null) throw new AuthenticationException("Cannot retrieve auth token");
 
@@ -81,7 +81,7 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
         return new AuthenticationToken(clientAuth.access_token(), clientAuth.api_server(), expiresAt, clientAuth.refresh_token(), clientAuth.token_type());
     }
 
-    private OffsetDateTime getExpirationDate(String dateHeader, Authorization clientAuth) {
+    private OffsetDateTime getExpirationDate(String dateHeader, AuthorizationResponse clientAuth) {
         OffsetDateTime localDate = DateUtils.parseHeaderDateToLocalOffsetDateTime(dateHeader);
 
         return localDate.plusSeconds(clientAuth.expires_in());
