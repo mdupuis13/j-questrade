@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -48,7 +49,7 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
         ResponseEntity<AccountResponse> response =
                 callQuestrade(authToken, "accounts").toEntity(AccountResponse.class);
 
-        return response.getBody().accounts();
+        return response.getBody() == null ? Collections.emptyList() : response.getBody().accounts();
     }
 
     @Override
@@ -57,7 +58,7 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
         ResponseEntity<PositionsResponse> response =
                 callQuestrade(authToken, "accounts/%s/positions".formatted(account.number())).toEntity(PositionsResponse.class);
 
-        return response.getBody().positions();
+        return response.getBody() == null ? Collections.emptyList() : response.getBody().positions();
     }
 
     private RestClient.ResponseSpec callQuestrade(AuthenticationToken authToken, String ressource) {
