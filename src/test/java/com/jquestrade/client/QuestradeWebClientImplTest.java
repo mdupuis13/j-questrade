@@ -3,6 +3,7 @@ package com.jquestrade.client;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.jquestrade.Account;
 import com.jquestrade.AuthenticationToken;
+import com.jquestrade.Position;
 import com.jquestrade.client.config.WebClientProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.instancio.Instancio;
@@ -29,14 +30,10 @@ import static org.instancio.Select.field;
 @Slf4j
 class QuestradeWebClientImplTest {
 
-    // It appears that Questrade always expires the token in 1800 seconds (30 minutes)
-    // add a buffer for test execution time between wiremock response and code
-    private static final short DEFAULT_TIMEOUT_SECONDS = 1801;
-
     // This has to match the wiremock stub response
     private static final short NB_ACCOUNTS = 2;
     private static final String ACCESS_TOKEN = "my-access-token-123";
-    private static final String TEST_URL_TEMPLATE = "http://localhost:%d";
+    private static final String TEST_URL_TEMPLATE = "http://localhost:%d/";
 
     @RegisterExtension
     static WireMockExtension wiremock =
@@ -44,9 +41,6 @@ class QuestradeWebClientImplTest {
                              .options(wireMockConfig().usingFilesUnderDirectory("wiremock")
                              ).build();
     QuestradeWebClient sut;
-
-    // Use this URL to test a real call (use sparingly, it's rate limited)
-//    private static final String TEST_URL = "https://login.questrade.com";
 
     @Mock
     WebClientProperties webclientProperties;
@@ -100,5 +94,22 @@ class QuestradeWebClientImplTest {
         assertThatList(result).last()
                               .hasFieldOrPropertyWithValue("type", "RRSP")
                               .hasFieldOrPropertyWithValue("number", "99912346");
+    }
+
+    @Test
+    void givenIAmAuthenticated_callingGetPositionsWithAnAccount_returnsListOfPositions() {
+        AuthenticationToken authToken = Instancio.of(AuthenticationToken.class)
+                                                 .set(field(AuthenticationToken::api_server), testServerUrl)
+                                                 .set(field(AuthenticationToken::access_token), ACCESS_TOKEN)
+                                                 .create();
+
+        Account anAccount = Instancio.create(Account.class);
+
+        List<Position> result = sut.getPositions(authToken, anAccount);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.getFirst())
+                .hasFieldOrPropertyWithValue("symbol", "THI.TO")
+                .hasFieldOrPropertyWithValue("currentPrice", 60.17);
     }
 }

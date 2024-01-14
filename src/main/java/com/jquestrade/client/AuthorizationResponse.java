@@ -11,9 +11,9 @@ package com.jquestrade.client;
  * @param refresh_token The new refresh token, which can be used to generate a new {@code Authorization}.
  * @param token_type    The access token type. Is always <b>Bearer</b>
  */
-record Authorization(String access_token,
-                     String api_server,
-                     int expires_in,
-                     String refresh_token,
-                     String token_type) {
+record AuthorizationResponse(String access_token,
+                             String api_server,
+                             int expires_in,
+                             String refresh_token,
+                             String token_type) {
 }

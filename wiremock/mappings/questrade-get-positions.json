@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/v1/{account}/positions",
+    "urlPathTemplate": "/v1/accounts/{accountId}/positions",
     "headers": {
       "Authorization": {
         "contains": "Bearer my-access-token-123"
@@ -21,8 +21,8 @@
           "averageEntryPrice": 60.23,
           "closedPnl": 0,
           "openPnl": -6,
-          "totalCost": false,
-          "isRealTime": "Individual",
+          "totalCost": 25.95,
+          "isRealTime": false,
           "isUnderReorg": false
         }
       ],
