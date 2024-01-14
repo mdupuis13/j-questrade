@@ -33,7 +33,7 @@ class QuestradeWebClientImplTest {
     // This has to match the wiremock stub response
     private static final short NB_ACCOUNTS = 2;
     private static final String ACCESS_TOKEN = "my-access-token-123";
-    private static final String TEST_URL_TEMPLATE = "http://localhost:%d";
+    private static final String TEST_URL_TEMPLATE = "http://localhost:%d/";
 
     @RegisterExtension
     static WireMockExtension wiremock =
@@ -41,9 +41,6 @@ class QuestradeWebClientImplTest {
                              .options(wireMockConfig().usingFilesUnderDirectory("wiremock")
                              ).build();
     QuestradeWebClient sut;
-
-    // Use this URL to test a real call (use sparingly, it's rate limited)
-//    private static final String TEST_URL = "https://login.questrade.com";
 
     @Mock
     WebClientProperties webclientProperties;
@@ -105,6 +102,7 @@ class QuestradeWebClientImplTest {
                                                  .set(field(AuthenticationToken::api_server), testServerUrl)
                                                  .set(field(AuthenticationToken::access_token), ACCESS_TOKEN)
                                                  .create();
+
         Account anAccount = Instancio.create(Account.class);
 
         List<Position> result = sut.getPositions(authToken, anAccount);
