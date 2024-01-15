@@ -1,12 +1,12 @@
 package com.jquestrade.client;
 
+import com.jquestrade.UtilsForTests.RequestPeriodUtils;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 
 import java.time.ZonedDateTime;
 
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.*;
 
 class RequestPeriodTest {
     @Test
@@ -30,5 +30,13 @@ class RequestPeriodTest {
                                                                  .withMessageContaining("must be before or equal to End date");
     }
 
+    @Test
+    void givenValidPeriod_callingGetInterval_returnsTheIntervalBetweenStartAndEnd() {
+        RequestPeriod period = RequestPeriodUtils.getValidPeriod();
 
+        Long result = period.getDaysInBetween();
+
+        assertThat(result).isNotZero()
+                          .isPositive();
+    }
 }
