@@ -1,10 +1,21 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/v1/markets/candles/38738?startTime=2014-10-01T00:00:00-05:00&endTime=2014-10-20T23:59:59-05:00&interval=OneDay",
+    "urlPathTemplate": "/v1/markets/candles/{symbolID}",
     "headers": {
       "Authorization": {
         "contains": "Bearer my-access-token-123"
+      }
+    },
+    "queryParameters": {
+      "startDate": {
+        "absent": true
+      },
+      "endDate": {
+        "absent": true
+      },
+      "interval": {
+        "equalTo": "OneDay"
       }
     }
   },
@@ -13,8 +24,8 @@
     "jsonBody": {
       "candles": [
         {
-          "start": "2014-01-02T00:00:00.000000-05:00",
-          "end": "2014-01-03T00:00:00.000000-05:00",
+          "start": "{{request.query.startTime}}",
+          "end": "{{request.query.endTime}}",
           "low": 70.3,
           "high": 70.78,
           "open": 70.68,
