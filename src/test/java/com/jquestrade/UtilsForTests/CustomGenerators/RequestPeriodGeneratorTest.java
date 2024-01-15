@@ -4,7 +4,7 @@ import com.jquestrade.client.RequestPeriod;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.RepeatedTest;
 
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.instancio.Select.all;
@@ -21,7 +21,7 @@ class RequestPeriodGeneratorTest {
         RequestPeriod result = testPeriod.period;
 
         assertThat(result.periodStart()).isBefore(result.periodEnd());
-        OffsetDateTime lastDayInRange = result.periodStart().plusDays(RequestPeriodGenerator.MAX_DAYS_IN_PERIOD);
+        ZonedDateTime lastDayInRange = result.periodStart().plusDays(RequestPeriodGenerator.MAX_DAYS_IN_PERIOD);
         assertThat(result.periodEnd()).isBeforeOrEqualTo(lastDayInRange);
     }
 

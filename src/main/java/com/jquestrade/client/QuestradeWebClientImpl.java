@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
@@ -92,13 +92,13 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
         if (clientAuth == null) throw new AuthenticationException("Cannot retrieve auth token");
 
         String dateHeader = response.getHeaders().getFirst("date");
-        OffsetDateTime expiresAt = getExpirationDate(dateHeader, clientAuth);
+        ZonedDateTime expiresAt = getExpirationDate(dateHeader, clientAuth);
 
         return new AuthenticationToken(clientAuth.access_token(), clientAuth.api_server(), expiresAt, clientAuth.refresh_token(), clientAuth.token_type());
     }
 
-    private OffsetDateTime getExpirationDate(String dateHeader, AuthorizationResponse clientAuth) {
-        OffsetDateTime localDate = DateUtils.parseHeaderDateToLocalOffsetDateTime(dateHeader);
+    private ZonedDateTime getExpirationDate(String dateHeader, AuthorizationResponse clientAuth) {
+        ZonedDateTime localDate = DateUtils.parseHeaderDateToLocalOffsetDateTime(dateHeader);
 
         return localDate.plusSeconds(clientAuth.expires_in());
     }

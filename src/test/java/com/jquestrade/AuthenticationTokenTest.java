@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.instancio.Select.field;
@@ -29,7 +30,7 @@ class AuthenticationTokenTest {
     @Test
     void givenAValidAccessToken_isValid_returnsTrue() {
         AuthenticationToken sut = Instancio.of(AuthenticationToken.class)
-                                           .generate(field("expires_at"), gen -> gen.temporal().offsetDateTime().future())
+                                           .generate(field("expires_at"), gen -> gen.temporal().zonedDateTime().future())
                                            .create();
 
         assertThat(sut.isValid()).isTrue();
@@ -37,7 +38,7 @@ class AuthenticationTokenTest {
 
     @Test
     void givenAuthValid_andTimeNotExpired_isValid_returnsTrue() {
-        OffsetDateTime tokenDateTime = OffsetDateTime.of(LocalDateTime.now(), ZoneOffset.UTC).plusSeconds(1);
+        ZonedDateTime tokenDateTime = ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC).plusSeconds(1);
 
         AuthenticationToken sut = Instancio.of(AuthenticationToken.class)
                                            .set(field(AuthenticationToken::expires_at), tokenDateTime)
@@ -48,7 +49,7 @@ class AuthenticationTokenTest {
 
     @Test
     void givenAuthValid_andTimeIsExpired_isValid_returnsFalse() {
-        OffsetDateTime tokenDateTime = OffsetDateTime.of(LocalDateTime.now(), ZoneOffset.UTC).minusSeconds(1);
+        ZonedDateTime tokenDateTime = ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC).minusSeconds(1);
 
         AuthenticationToken sut = Instancio.of(AuthenticationToken.class)
                                            .set(field(AuthenticationToken::expires_at), tokenDateTime)
