@@ -1,11 +1,9 @@
 package com.jquestrade.client;
 
-import com.jquestrade.Account;
-import com.jquestrade.AuthenticationToken;
-import com.jquestrade.Candle;
-import com.jquestrade.Position;
+import com.jquestrade.*;
 import com.jquestrade.client.config.WebClientProperties;
 import com.jquestrade.exceptions.AuthenticationException;
+import com.jquestrade.exceptions.TimeRangeException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
@@ -19,7 +17,8 @@ import java.util.List;
 public class QuestradeWebClientImpl implements QuestradeWebClient {
 
     private static final String API_V1_TEMPLATE = "%s/v1/%s";
-    private static final DateTimeFormatter FORMATTER_FOR_DATE = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    private static final DateTimeFormatter DATE_FORMATTER_FOR_URL = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    private static final DateTimeFormatter DATE_FORMATTER_FOR_LOG = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
 
     private final RestClient authenticationClient;
@@ -37,9 +36,9 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
 
         ResponseEntity<AuthorizationResponse> response = authenticationClient.get()
                                                                              .uri(uriBuilder -> uriBuilder.path("/oauth2/token")
-                                                                                                  .queryParam("grant_type", "refresh_token")
-                                                                                                  .queryParam("refresh_token", refreshToken)
-                                                                                                  .build())
+                                                                                                          .queryParam("grant_type", "refresh_token")
+                                                                                                          .queryParam("refresh_token", refreshToken)
+                                                                                                          .build())
                                                                              .retrieve()
                                                                              .toEntity(AuthorizationResponse.class);
 
@@ -69,12 +68,30 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
         log.info("QuestradeWebClient: Calling Questrade API getCandles(token, %s, %s)".formatted(position.symbol(), period));
 
         //  v1/markets/candles/38738?startTime=2014-10-01T00:00:00-05:00&endTime=2014-10-20T23:59:59-05:00&interval=OneDay
-        String url = "markets/candles/%s?startTime=%s&endTime=%s&interval=OneDay".formatted(position.symbolId(),period.periodStart().format(FORMATTER_FOR_DATE),period.periodEnd().format(FORMATTER_FOR_DATE));
-        ResponseEntity<CandlesResponse> response =
-                callQuestrade(authToken, url)
-                        .toEntity(CandlesResponse.class);
+        String url = "markets/candles/%s?startTime=%s&endTime=%s&interval=OneDay".formatted(position.symbolId(),
+                                                                                            period.periodStart().format(DATE_FORMATTER_FOR_URL),
+                                                                                            period.periodEnd().format(DATE_FORMATTER_FOR_URL));
+
+        ResponseEntity<CandlesResponse> response = callQuestrade(authToken, url).toEntity(CandlesResponse.class);
 
         return response.getBody() == null ? Collections.emptyList() : response.getBody().candles();
+    }
+
+    @Override
+    public List<Activity> getAccountActivities(AuthenticationToken authToken, Account account, RequestPeriod period) {
+        log.info("QuestradeWebClient: Calling Questrade API getAccountActivities(token, %s, %s)".formatted(account.number(), period));
+
+        if (period.getDaysInBetween() < 1 || period.getDaysInBetween() > 30)
+            throw new TimeRangeException("Invalid period. Account activities are limited to 30 days. Start: %s  End: %s"
+                                                 .formatted(period.periodEnd().format(DATE_FORMATTER_FOR_LOG),
+                                                            period.periodEnd().format(DATE_FORMATTER_FOR_LOG)));
+
+        String url = "accounts/%s/activities?startTime=%s&endTime=%s&interval=OneDay".formatted(account.number(),
+                                                                                                period.periodStart().format(DATE_FORMATTER_FOR_URL),
+                                                                                                period.periodEnd().format(DATE_FORMATTER_FOR_URL));
+        ResponseEntity<AccountActivityResponse> response = callQuestrade(authToken, url).toEntity(AccountActivityResponse.class);
+
+        return response.getBody() == null ? Collections.emptyList() : response.getBody().activities();
     }
 
     private RestClient.ResponseSpec callQuestrade(AuthenticationToken authToken, String ressource) {
