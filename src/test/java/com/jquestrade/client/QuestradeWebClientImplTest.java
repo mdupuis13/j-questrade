@@ -1,9 +1,12 @@
 package com.jquestrade.client;
 
+import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.jquestrade.Account;
 import com.jquestrade.AuthenticationToken;
+import com.jquestrade.Candle;
 import com.jquestrade.Position;
+import com.jquestrade.UtilsForTests.CustomGenerators.RequestPeriodGenerator;
 import com.jquestrade.client.config.WebClientProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.instancio.Instancio;
@@ -23,6 +26,7 @@ import java.util.List;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatList;
+import static org.instancio.Select.all;
 import static org.instancio.Select.field;
 
 @ExtendWith(InstancioExtension.class)
@@ -30,8 +34,6 @@ import static org.instancio.Select.field;
 @Slf4j
 class QuestradeWebClientImplTest {
 
-    // This has to match the wiremock stub response
-    private static final short NB_ACCOUNTS = 2;
     private static final String ACCESS_TOKEN = "my-access-token-123";
     private static final String TEST_URL_TEMPLATE = "http://localhost:%d/";
 
@@ -39,6 +41,8 @@ class QuestradeWebClientImplTest {
     static WireMockExtension wiremock =
             WireMockExtension.newInstance()
                              .options(wireMockConfig().usingFilesUnderDirectory("wiremock")
+                                                      .globalTemplating(true)
+                                                      .notifier(new ConsoleNotifier(true))
                              ).build();
     QuestradeWebClient sut;
 
@@ -73,21 +77,18 @@ class QuestradeWebClientImplTest {
         String oldRefreshToken = Instancio.create(String.class);
 
         AuthenticationToken token = sut.authenticate(oldRefreshToken);
-
         log.info(token.toString());
+
         assertThat(token.isValid()).isTrue();
     }
 
     @Test
     void givenIAmAuthenticated_callingGetAccounts_returnsListOfAccounts() {
-        AuthenticationToken authToken = Instancio.of(AuthenticationToken.class)
-                                                 .set(field(AuthenticationToken::api_server), testServerUrl)
-                                                 .set(field(AuthenticationToken::access_token), ACCESS_TOKEN)
-                                                 .create();
+        AuthenticationToken authToken = getValidTestAuthToken();
 
         List<Account> result = sut.getAccounts(authToken);
 
-        assertThat(result).hasSize(NB_ACCOUNTS);
+        assertThat(result).hasSize(2);
         assertThatList(result).first()
                               .hasFieldOrPropertyWithValue("type", "TFSA")
                               .hasFieldOrPropertyWithValue("number", "99912345");
@@ -98,10 +99,7 @@ class QuestradeWebClientImplTest {
 
     @Test
     void givenIAmAuthenticated_callingGetPositionsWithAnAccount_returnsListOfPositions() {
-        AuthenticationToken authToken = Instancio.of(AuthenticationToken.class)
-                                                 .set(field(AuthenticationToken::api_server), testServerUrl)
-                                                 .set(field(AuthenticationToken::access_token), ACCESS_TOKEN)
-                                                 .create();
+        AuthenticationToken authToken = getValidTestAuthToken();
 
         Account anAccount = Instancio.create(Account.class);
 
@@ -111,5 +109,46 @@ class QuestradeWebClientImplTest {
         assertThat(result.getFirst())
                 .hasFieldOrPropertyWithValue("symbol", "THI.TO")
                 .hasFieldOrPropertyWithValue("currentPrice", 60.17);
+    }
+
+    @Test
+    void givenIAmAuthenticated_callingGetQuotes_returnsListOfPricesForPeriod() {
+        AuthenticationToken authToken = getValidTestAuthToken();
+        RequestPeriod aPeriod = getValidPeriod();
+        Position aPosition = Instancio.create(Position.class);
+
+        List<Candle> result = sut.getCandles(authToken, aPosition, aPeriod);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.getFirst())
+                .hasFieldOrPropertyWithValue("low", 70.3)
+                .hasFieldOrPropertyWithValue("high", 70.78)
+                .hasFieldOrPropertyWithValue("open", 70.68)
+                .hasFieldOrPropertyWithValue("close", 70.73)
+                .hasFieldOrPropertyWithValue("volume", 983609);
+    }
+
+    private AuthenticationToken getValidTestAuthToken() {
+        return Instancio.of(AuthenticationToken.class)
+                        .set(field(AuthenticationToken::api_server), testServerUrl)
+                        .set(field(AuthenticationToken::access_token), ACCESS_TOKEN)
+                        .create();
+    }
+
+    /**
+     * Hacky way to use a generator for the RequestPeriod
+     *
+     * @return A valid {@link RequestPeriod}
+     */
+    private RequestPeriod getValidPeriod() {
+        class TempPeriod {
+            public RequestPeriod period;
+        }
+
+        TempPeriod temp = Instancio.of(TempPeriod.class)
+                                   .supply(all(RequestPeriod.class), new RequestPeriodGenerator())
+                                   .create();
+
+        return temp.period;
     }
 }

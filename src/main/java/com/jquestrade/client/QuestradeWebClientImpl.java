@@ -2,6 +2,7 @@ package com.jquestrade.client;
 
 import com.jquestrade.Account;
 import com.jquestrade.AuthenticationToken;
+import com.jquestrade.Candle;
 import com.jquestrade.Position;
 import com.jquestrade.client.config.WebClientProperties;
 import com.jquestrade.exceptions.AuthenticationException;
@@ -10,13 +11,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 
 @Slf4j
 public class QuestradeWebClientImpl implements QuestradeWebClient {
 
-    public static final String API_V1_TEMPLATE = "%s/v1/%s";
+    private static final String API_V1_TEMPLATE = "%s/v1/%s";
+    private static final DateTimeFormatter FORMATTER_FOR_DATE = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
 
     private final RestClient authenticationClient;
@@ -45,7 +48,7 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
 
     @Override
     public List<Account> getAccounts(AuthenticationToken authToken) {
-        log.info("QuestradeWebClient: Calling Questrade API getAccounts()");
+        log.info("QuestradeWebClient: Calling Questrade API getAccounts(token)");
         ResponseEntity<AccountResponse> response =
                 callQuestrade(authToken, "accounts").toEntity(AccountResponse.class);
 
@@ -54,11 +57,24 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
 
     @Override
     public List<Position> getPositions(AuthenticationToken authToken, Account account) {
-        log.info("QuestradeWebClient: Calling Questrade API getPositions()");
+        log.info("QuestradeWebClient: Calling Questrade API getPositions(token, %s)".formatted(account.number()));
         ResponseEntity<PositionsResponse> response =
                 callQuestrade(authToken, "accounts/%s/positions".formatted(account.number())).toEntity(PositionsResponse.class);
 
         return response.getBody() == null ? Collections.emptyList() : response.getBody().positions();
+    }
+
+    @Override
+    public List<Candle> getCandles(AuthenticationToken authToken, Position position, RequestPeriod period) {
+        log.info("QuestradeWebClient: Calling Questrade API getCandles(token, %s, %s)".formatted(position.symbol(), period));
+
+        //  v1/markets/candles/38738?startTime=2014-10-01T00:00:00-05:00&endTime=2014-10-20T23:59:59-05:00&interval=OneDay
+        String url = "markets/candles/%s?startTime=%s&endTime=%s&interval=OneDay".formatted(position.symbolId(),period.periodStart().format(FORMATTER_FOR_DATE),period.periodEnd().format(FORMATTER_FOR_DATE));
+        ResponseEntity<CandlesResponse> response =
+                callQuestrade(authToken, url)
+                        .toEntity(CandlesResponse.class);
+
+        return response.getBody() == null ? Collections.emptyList() : response.getBody().candles();
     }
 
     private RestClient.ResponseSpec callQuestrade(AuthenticationToken authToken, String ressource) {
