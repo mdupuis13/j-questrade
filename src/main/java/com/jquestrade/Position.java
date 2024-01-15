@@ -20,7 +20,7 @@ package com.jquestrade;
  */
 public record Position(
         String symbol,
-        String symbolId,
+        int symbolId,
         int openQuantity,
         int closedQuantity,
         double currentMarketValue,
