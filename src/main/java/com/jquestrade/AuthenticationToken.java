@@ -1,7 +1,7 @@
 package com.jquestrade;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * Represents the data that allows an application to make requests the Questrade API.
@@ -16,7 +16,7 @@ import java.time.OffsetDateTime;
  */
 public record AuthenticationToken(String access_token,
                                   String api_server,
-                                  OffsetDateTime expires_at,
+                                  ZonedDateTime expires_at,
                                   String refresh_token,
                                   String token_type) {
 

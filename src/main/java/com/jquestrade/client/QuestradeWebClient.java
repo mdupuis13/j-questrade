@@ -1,9 +1,6 @@
 package com.jquestrade.client;
 
-import com.jquestrade.Account;
-import com.jquestrade.AuthenticationToken;
-import com.jquestrade.Candle;
-import com.jquestrade.Position;
+import com.jquestrade.*;
 
 import java.util.List;
 
@@ -15,4 +12,6 @@ public interface QuestradeWebClient {
     List<Position> getPositions(AuthenticationToken authToken, Account account);
 
     List<Candle> getCandles(AuthenticationToken authToken, Position position, RequestPeriod period);
+
+    List<Activity> getAccountActivities(AuthenticationToken authToken, Account account, RequestPeriod period);
 }

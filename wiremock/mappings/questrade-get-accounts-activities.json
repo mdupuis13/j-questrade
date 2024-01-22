@@ -1,10 +1,18 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/v1/accounts/26598145/activities?startTime=2011-02-01T00:00:00-05:00&endTime=2011-02-28T00:00:00-05:00&",
+    "urlPathTemplate": "/v1/accounts/{accountId}/activities",
     "headers": {
       "Authorization": {
         "contains": "Bearer my-access-token-123"
+      }
+    },
+    "queryParameters": {
+      "startDate": {
+        "absent": true
+      },
+      "endDate": {
+        "absent": true
       }
     }
   },

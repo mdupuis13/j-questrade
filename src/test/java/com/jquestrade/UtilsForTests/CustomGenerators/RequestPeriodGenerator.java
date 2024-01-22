@@ -5,8 +5,7 @@ import org.instancio.Instancio;
 import org.instancio.Random;
 import org.instancio.generator.Generator;
 
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 public class RequestPeriodGenerator implements Generator<RequestPeriod> {
     public static final int MAX_DAYS_IN_PERIOD = 30;
@@ -15,9 +14,8 @@ public class RequestPeriodGenerator implements Generator<RequestPeriod> {
     public RequestPeriod generate(Random random) {
         int nbDaysInFuture = random.intRange(1, MAX_DAYS_IN_PERIOD);
 
-        OffsetDateTime start = Instancio.create(OffsetDateTime.class)
-                                        .withOffsetSameLocal(ZoneOffset.ofHours(-5));
-        OffsetDateTime end = start.plusDays(nbDaysInFuture);
+        ZonedDateTime start = Instancio.create(ZonedDateTime.class);
+        ZonedDateTime end = start.plusDays(nbDaysInFuture);
 
         return new RequestPeriod(start, end);
     }
