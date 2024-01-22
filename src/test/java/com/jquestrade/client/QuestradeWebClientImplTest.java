@@ -2,12 +2,9 @@ package com.jquestrade.client;
 
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import com.jquestrade.Account;
-import com.jquestrade.AuthenticationToken;
-import com.jquestrade.Candle;
-import com.jquestrade.Position;
-import com.jquestrade.UtilsForTests.CustomGenerators.RequestPeriodGenerator;
+import com.jquestrade.*;
 import com.jquestrade.client.config.WebClientProperties;
+import com.jquestrade.exceptions.TimeRangeException;
 import lombok.extern.slf4j.Slf4j;
 import org.instancio.Instancio;
 import org.instancio.junit.InstancioExtension;
@@ -24,9 +21,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatList;
-import static org.instancio.Select.all;
+import static com.jquestrade.UtilsForTests.RequestPeriodUtils.getInvalidPeriod_ForAccountActivities;
+import static com.jquestrade.UtilsForTests.RequestPeriodUtils.getValidPeriod;
+import static org.assertj.core.api.Assertions.*;
 import static org.instancio.Select.field;
 
 @ExtendWith(InstancioExtension.class)
@@ -128,27 +125,33 @@ class QuestradeWebClientImplTest {
                 .hasFieldOrPropertyWithValue("volume", 983609);
     }
 
+    @Test
+    void givenIAmAuthenticated_callingGetActivities_returnsListOfActivitiesForPeriod() {
+        AuthenticationToken authToken = getValidTestAuthToken();
+        RequestPeriod aPeriod = getValidPeriod();
+        Account anAccount = Instancio.create(Account.class);
+
+        List<Activity> result = sut.getAccountActivities(authToken, anAccount, aPeriod);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.getFirst())
+                .hasFieldOrPropertyWithValue("type", "Interest");
+    }
+
+    @Test
+    void givenIAmAuthenticated_callingGetActivitiesWithToBigPeriod_throwsArgumentException() {
+        AuthenticationToken authToken = getValidTestAuthToken();
+        RequestPeriod aPeriod = getInvalidPeriod_ForAccountActivities();
+        Account anAccount = Instancio.create(Account.class);
+
+        assertThatExceptionOfType(TimeRangeException.class).isThrownBy(() -> sut.getAccountActivities(authToken, anAccount, aPeriod))
+                                                           .withMessageContaining("Invalid period. Account activities are limited to 30 days.");
+    }
+
     private AuthenticationToken getValidTestAuthToken() {
         return Instancio.of(AuthenticationToken.class)
                         .set(field(AuthenticationToken::api_server), testServerUrl)
                         .set(field(AuthenticationToken::access_token), ACCESS_TOKEN)
                         .create();
-    }
-
-    /**
-     * Hacky way to use a generator for the RequestPeriod
-     *
-     * @return A valid {@link RequestPeriod}
-     */
-    private RequestPeriod getValidPeriod() {
-        class TempPeriod {
-            public RequestPeriod period;
-        }
-
-        TempPeriod temp = Instancio.of(TempPeriod.class)
-                                   .supply(all(RequestPeriod.class), new RequestPeriodGenerator())
-                                   .create();
-
-        return temp.period;
     }
 }
