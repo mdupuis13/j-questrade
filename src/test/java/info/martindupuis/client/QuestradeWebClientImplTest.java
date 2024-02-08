@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import info.martindupuis.*;
 import info.martindupuis.client.config.WebClientProperties;
+import info.martindupuis.exceptions.AuthenticationExpiredException;
 import info.martindupuis.exceptions.TimeRangeException;
 import lombok.extern.slf4j.Slf4j;
 import org.instancio.Instancio;
@@ -95,6 +96,14 @@ class QuestradeWebClientImplTest {
     }
 
     @Test
+    void givenAuthenticationHasExpired_callingGetAccounts_throwsAuthenticationExpiredException() {
+        AuthenticationToken authToken = getExpiredTestAuthToken();
+
+        assertThatExceptionOfType(AuthenticationExpiredException.class).isThrownBy(() -> sut.getAccounts(authToken))
+                .withMessageContaining("expired");
+    }
+
+    @Test
     void givenIAmAuthenticated_callingGetPositionsWithAnAccount_returnsListOfPositions() {
         AuthenticationToken authToken = getValidTestAuthToken();
 
@@ -153,5 +162,13 @@ class QuestradeWebClientImplTest {
                         .set(field(AuthenticationToken::api_server), testServerUrl)
                         .set(field(AuthenticationToken::access_token), ACCESS_TOKEN)
                         .create();
+    }
+
+    private AuthenticationToken getExpiredTestAuthToken() {
+        return Instancio.of(AuthenticationToken.class)
+                .set(field(AuthenticationToken::api_server), testServerUrl)
+                .set(field(AuthenticationToken::access_token), ACCESS_TOKEN)
+                .generate(field(AuthenticationToken::expires_at), gen -> gen.temporal().zonedDateTime().past())
+                .create();
     }
 }

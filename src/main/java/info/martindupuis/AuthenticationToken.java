@@ -27,8 +27,11 @@ public record AuthenticationToken(String access_token,
      */
     public Boolean isValid() {
         boolean accessTokenIsValid = !(access_token == null || access_token.isBlank() || access_token.isEmpty());
-        boolean dateExpired = LocalDateTime.now().isAfter(expires_at.toLocalDateTime());
 
-        return !dateExpired && accessTokenIsValid;
+        return !isExpired() && accessTokenIsValid;
+    }
+
+    public boolean isExpired() {
+        return LocalDateTime.now().isAfter(expires_at.toLocalDateTime());
     }
 }

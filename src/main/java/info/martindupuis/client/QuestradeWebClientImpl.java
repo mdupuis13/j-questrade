@@ -3,6 +3,7 @@ package info.martindupuis.client;
 import info.martindupuis.*;
 import info.martindupuis.client.config.WebClientProperties;
 import info.martindupuis.exceptions.AuthenticationException;
+import info.martindupuis.exceptions.AuthenticationExpiredException;
 import info.martindupuis.exceptions.TimeRangeException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +48,8 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
 
     @Override
     public List<Account> getAccounts(AuthenticationToken authToken) {
-        log.info("QuestradeWebClient: Calling Questrade API getAccounts(token)");
+        log.info("QuestradeWebClient: entryPoint=getAccounts");
+
         ResponseEntity<AccountResponse> response =
                 callQuestrade(authToken, "accounts").toEntity(AccountResponse.class);
 
@@ -56,7 +58,7 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
 
     @Override
     public List<Position> getPositions(AuthenticationToken authToken, Account account) {
-        log.info("QuestradeWebClient: Calling Questrade API getPositions(token, %s)".formatted(account.number()));
+        log.info("QuestradeWebClient: entryPoint=getPositions account=*****");
         ResponseEntity<PositionsResponse> response =
                 callQuestrade(authToken, "accounts/%s/positions".formatted(account.number())).toEntity(PositionsResponse.class);
 
@@ -65,7 +67,7 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
 
     @Override
     public List<Candle> getCandles(AuthenticationToken authToken, Position position, RequestPeriod period) {
-        log.info("QuestradeWebClient: Calling Questrade API getCandles(token, %s, %s)".formatted(position.symbol(), period));
+        log.info("QuestradeWebClient: entryPoint=getCandles position=%s requestPeriod=%s)".formatted(position.symbol(), period));
 
         //  v1/markets/candles/38738?startTime=2014-10-01T00:00:00-05:00&endTime=2014-10-20T23:59:59-05:00&interval=OneDay
         String url = "markets/candles/%s?startTime=%s&endTime=%s&interval=OneDay".formatted(position.symbolId(),
@@ -79,7 +81,7 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
 
     @Override
     public List<Activity> getAccountActivities(AuthenticationToken authToken, Account account, RequestPeriod period) {
-        log.info("QuestradeWebClient: Calling Questrade API getAccountActivities(token, %s, %s)".formatted(account.number(), period));
+        log.info("QuestradeWebClient: entryPoint=getAccountActivities (token, account=***** requestPeriod=%s)".formatted(period));
 
         if (period.getDaysInBetween() < 1 || period.getDaysInBetween() > 30)
             throw new TimeRangeException("Invalid period. Account activities are limited to 30 days. Start: %s  End: %s"
@@ -95,6 +97,8 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
     }
 
     private RestClient.ResponseSpec callQuestrade(AuthenticationToken authToken, String ressource) {
+        if (authToken.isExpired())
+            throw new AuthenticationExpiredException("Authentication has expired at %s".formatted(authToken.expires_at()));
 
         return apiClient.get()
                         .uri(API_V1_TEMPLATE.formatted(authToken.api_server(), ressource))
@@ -103,7 +107,7 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
     }
 
     private AuthenticationToken createAuthenticationObject(ResponseEntity<AuthorizationResponse> response) {
-        log.info("QuestradeWebClient: Creating authentication object from API answer");
+        log.info("QuestradeWebClient: action=createAuthenticationObjectFromAnswer");
         AuthorizationResponse clientAuth = response.getBody();
 
         if (clientAuth == null) throw new AuthenticationException("Cannot retrieve auth token");
