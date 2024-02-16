@@ -56,4 +56,27 @@ class AuthenticationTokenTest {
 
         assertThat(sut.isValid()).isFalse();
     }
+
+    @Test
+    void givenAuthValid_andTimeNotExpired_isExpired_returnsfalse() {
+        ZonedDateTime tokenDateTime = ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC).plusSeconds(1);
+
+        AuthenticationToken sut = Instancio.of(AuthenticationToken.class)
+                .set(field(AuthenticationToken::expires_at), tokenDateTime)
+                .create();
+
+        assertThat(sut.isExpired()).isFalse();
+    }
+
+    @Test
+    void givenAuthValid_andTimeIsExpired_isExpired_returnsTue() {
+        ZonedDateTime tokenDateTime = ZonedDateTime.of(LocalDateTime.now(), ZoneOffset.UTC).minusSeconds(1);
+
+        AuthenticationToken sut = Instancio.of(AuthenticationToken.class)
+                .set(field(AuthenticationToken::expires_at), tokenDateTime)
+                .create();
+
+        assertThat(sut.isExpired()).isTrue();
+    }
+
 }
