@@ -38,10 +38,10 @@ class QuestradeWebClientImplTest {
     @RegisterExtension
     static WireMockExtension wiremock =
             WireMockExtension.newInstance()
-                             .options(wireMockConfig().usingFilesUnderDirectory("wiremock")
-                                                      .globalTemplating(true)
-                                                      .notifier(new ConsoleNotifier(true))
-                             ).build();
+                    .options(wireMockConfig().usingFilesUnderDirectory("wiremock")
+                            .globalTemplating(true)
+                            .notifier(new ConsoleNotifier(true))
+                    ).build();
     QuestradeWebClient sut;
 
     @Mock
@@ -88,11 +88,11 @@ class QuestradeWebClientImplTest {
 
         assertThat(result).hasSize(2);
         assertThatList(result).first()
-                              .hasFieldOrPropertyWithValue("type", "TFSA")
-                              .hasFieldOrPropertyWithValue("number", "99912345");
+                .hasFieldOrPropertyWithValue("type", "TFSA")
+                .hasFieldOrPropertyWithValue("number", "99912345");
         assertThatList(result).last()
-                              .hasFieldOrPropertyWithValue("type", "RRSP")
-                              .hasFieldOrPropertyWithValue("number", "99912346");
+                .hasFieldOrPropertyWithValue("type", "RRSP")
+                .hasFieldOrPropertyWithValue("number", "99912346");
     }
 
     @Test
@@ -154,14 +154,16 @@ class QuestradeWebClientImplTest {
         Account anAccount = Instancio.create(Account.class);
 
         assertThatExceptionOfType(TimeRangeException.class).isThrownBy(() -> sut.getAccountActivities(authToken, anAccount, aPeriod))
-                                                           .withMessageContaining("Invalid period. Account activities are limited to 30 days.");
+                .withMessageContaining("Invalid period. Account activities are limited to 30 days.");
     }
 
     private AuthenticationToken getValidTestAuthToken() {
         return Instancio.of(AuthenticationToken.class)
-                        .set(field(AuthenticationToken::api_server), testServerUrl)
-                        .set(field(AuthenticationToken::access_token), ACCESS_TOKEN)
-                        .create();
+                .set(field(AuthenticationToken::api_server), testServerUrl)
+                .set(field(AuthenticationToken::access_token), ACCESS_TOKEN)
+                .generate(field(AuthenticationToken::expires_at),
+                        generators -> generators.temporal().zonedDateTime().future())
+                .create();
     }
 
     private AuthenticationToken getExpiredTestAuthToken() {
