@@ -1,8 +1,9 @@
 package info.martindupuis;
 
-import info.martindupuis.exceptions.ArgumentException;
-import info.martindupuis.exceptions.RefreshTokenException;
-import info.martindupuis.exceptions.StatusCodeException;
+import info.martindupuis.jquestrade.*;
+import info.martindupuis.jquestrade.exceptions.ArgumentException;
+import info.martindupuis.jquestrade.exceptions.RefreshTokenException;
+import info.martindupuis.jquestrade.exceptions.StatusCodeException;
 
 import java.time.ZonedDateTime;
 import java.util.function.Consumer;
@@ -48,7 +49,7 @@ public interface Questrade {
      * Calling this function will save the resulting {@link AuthenticationToken} object to be relayed to <i>authorization relay function</i>
      * (if set using the {@link #setAuthRelay(Consumer)} method).<br><br>
      * For reference, an access token usually expires in 1800 seconds (30 minutes). This value can be retrieved by using
-     * {@link #getAuthorization()} then the {@link AuthenticationToken#expires_in()} method.
+     * {@link #getAuthorization()} then the {@link AuthenticationToken#expires_at()} method.
      *
      * @throws RefreshTokenException If the refresh token is invalid.
      * @throws StatusCodeException   If an error occurs when contacting the Questrade API.
