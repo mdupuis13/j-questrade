@@ -1,9 +1,7 @@
 package info.martindupuis.jquestrade;
 
-import info.martindupuis.Questrade;
-
 /** Represents a symbol/ticker. For more information on the ticker, use
- * {@link Questrade#getSymbol(int, int...)} to get a {@link SymbolInfo},
+ * {@link info.martindupuis.jquestrade.client.QuestradeWebClient#getSymbol(int, int...)} to get a {@link SymbolInfo},
  * which is this class + more info.
  * @see <a href="https://www.questrade.com/api/documentation/rest-operations/market-calls/symbols-search">
  * The symbol search documentation</a>
