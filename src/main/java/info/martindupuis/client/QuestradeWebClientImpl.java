@@ -88,9 +88,9 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
                                                  .formatted(period.periodEnd().format(DATE_FORMATTER_FOR_LOG),
                                                             period.periodEnd().format(DATE_FORMATTER_FOR_LOG)));
 
-        String url = "accounts/%s/activities?startTime=%s&endTime=%s&interval=OneDay".formatted(account.number(),
-                                                                                                period.periodStart().format(DATE_FORMATTER_FOR_URL),
-                                                                                                period.periodEnd().format(DATE_FORMATTER_FOR_URL));
+        String url = "accounts/%s/activities?startTime=%s&endTime=%s".formatted(account.number(),
+                                                                                period.periodStart().format(DATE_FORMATTER_FOR_URL),
+                                                                                period.periodEnd().format(DATE_FORMATTER_FOR_URL));
         ResponseEntity<AccountActivityResponse> response = callQuestrade(authToken, url).toEntity(AccountActivityResponse.class);
 
         return response.getBody() == null ? Collections.emptyList() : response.getBody().activities();
