@@ -1,7 +1,7 @@
 package info.martindupuis.UtilsForTests;
 
 import info.martindupuis.UtilsForTests.CustomGenerators.RequestPeriodGenerator;
-import info.martindupuis.client.RequestPeriod;
+import info.martindupuis.jquestrade.client.RequestPeriod;
 import org.instancio.Instancio;
 
 import java.time.ZoneId;

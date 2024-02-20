@@ -3,10 +3,11 @@ package info.martindupuis;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import info.martindupuis.exceptions.ArgumentException;
-import info.martindupuis.exceptions.RefreshTokenException;
-import info.martindupuis.exceptions.StatusCodeException;
-import info.martindupuis.exceptions.TimeRangeException;
+import info.martindupuis.jquestrade.*;
+import info.martindupuis.jquestrade.exceptions.ArgumentException;
+import info.martindupuis.jquestrade.exceptions.RefreshTokenException;
+import info.martindupuis.jquestrade.exceptions.StatusCodeException;
+import info.martindupuis.jquestrade.exceptions.TimeRangeException;
 
 import java.io.*;
 import java.net.HttpURLConnection;

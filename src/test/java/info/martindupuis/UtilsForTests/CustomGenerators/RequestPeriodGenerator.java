@@ -1,6 +1,6 @@
 package info.martindupuis.UtilsForTests.CustomGenerators;
 
-import info.martindupuis.client.RequestPeriod;
+import info.martindupuis.jquestrade.client.RequestPeriod;
 import org.instancio.Instancio;
 import org.instancio.Random;
 import org.instancio.generator.Generator;
