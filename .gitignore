@@ -127,6 +127,8 @@ fabric.properties
 # End of https://www.toptal.com/developers/gitignore/api/intellij
 
 /.idea/
+/workbench/
 
 ### wiremock ###
 /wiremock/wiremock-standalone-3.3.1.jar
+
