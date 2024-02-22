@@ -2,9 +2,9 @@ package info.martindupuis.jquestrade.client;
 
 import info.martindupuis.jquestrade.Account;
 
-import java.util.List;
+import java.util.Set;
 
 record AccountResponse(
-        List<Account> accounts,
+        Set<Account> accounts,
         int userId) {
 }

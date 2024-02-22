@@ -2,9 +2,9 @@ package info.martindupuis.jquestrade.client;
 
 import info.martindupuis.jquestrade.Activity;
 
-import java.util.List;
+import java.util.Set;
 
 record AccountActivityResponse(
-        List<Activity> activities,
+        Set<Activity> activities,
         int userId) {
 }

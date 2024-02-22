@@ -13,7 +13,7 @@ import org.springframework.web.client.RestClient;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -54,26 +54,26 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
     }
 
     @Override
-    public List<Account> getAccounts(AuthenticationToken authToken) {
+    public Set<Account> getAccounts(AuthenticationToken authToken) {
         log.info("QuestradeWebClient: entryPoint=getAccounts");
 
         ResponseEntity<AccountResponse> response =
                 callQuestrade(authToken, "accounts").toEntity(AccountResponse.class);
 
-        return response.getBody() == null ? Collections.emptyList() : response.getBody().accounts();
+        return response.getBody() == null ? Collections.emptySet() : response.getBody().accounts();
     }
 
     @Override
-    public List<Position> getPositions(AuthenticationToken authToken, Account account) {
+    public Set<Position> getPositions(AuthenticationToken authToken, Account account) {
         log.info("QuestradeWebClient: entryPoint=getPositions account=*****");
         ResponseEntity<PositionsResponse> response =
                 callQuestrade(authToken, "accounts/%s/positions".formatted(account.number())).toEntity(PositionsResponse.class);
 
-        return response.getBody() == null ? Collections.emptyList() : response.getBody().positions();
+        return response.getBody() == null ? Collections.emptySet() : response.getBody().positions();
     }
 
     @Override
-    public List<Candle> getCandles(AuthenticationToken authToken, Position position, RequestPeriod period) {
+    public Set<Candle> getCandles(AuthenticationToken authToken, Position position, RequestPeriod period) {
         log.info("QuestradeWebClient: entryPoint=getCandles position=%s requestPeriod=%s)".formatted(position.symbol(), period));
 
         //  v1/markets/candles/38738?startTime=2014-10-01T00:00:00-05:00&endTime=2014-10-20T23:59:59-05:00&interval=OneDay
@@ -83,11 +83,11 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
 
         ResponseEntity<CandlesResponse> response = callQuestrade(authToken, url).toEntity(CandlesResponse.class);
 
-        return response.getBody() == null ? Collections.emptyList() : response.getBody().candles();
+        return response.getBody() == null ? Collections.emptySet() : response.getBody().candles();
     }
 
     @Override
-    public List<Activity> getAccountActivities(AuthenticationToken authToken, Account account, RequestPeriod period) {
+    public Set<Activity> getAccountActivities(AuthenticationToken authToken, Account account, RequestPeriod period) {
         log.info("QuestradeWebClient: entryPoint=getAccountActivities (token, account=***** requestPeriod=%s)".formatted(period));
 
         if (period.getDaysInBetween() < 1 || period.getDaysInBetween() > 30)
@@ -100,15 +100,15 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
                                                                                 period.periodEnd().format(DATE_FORMATTER_FOR_URL));
         ResponseEntity<AccountActivityResponse> response = callQuestrade(authToken, url).toEntity(AccountActivityResponse.class);
 
-        return response.getBody() == null ? Collections.emptyList() : response.getBody().activities();
+        return response.getBody() == null ? Collections.emptySet() : response.getBody().activities();
     }
 
-    private RestClient.ResponseSpec callQuestrade(AuthenticationToken authToken, String ressource) {
+    private RestClient.ResponseSpec callQuestrade(AuthenticationToken authToken, String resource) {
         if (authToken.isExpired())
             throw new AuthenticationExpiredException("Authentication has expired at %s".formatted(authToken.expires_at()));
 
         return apiClient.get()
-                        .uri(API_V1_TEMPLATE.formatted(authToken.api_server(), ressource))
+                        .uri(API_V1_TEMPLATE.formatted(authToken.api_server(), resource))
                         .header("Authorization", "Bearer %s".formatted(authToken.access_token()))
                         .retrieve();
     }

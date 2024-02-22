@@ -2,16 +2,16 @@ package info.martindupuis.jquestrade.client;
 
 import info.martindupuis.jquestrade.*;
 
-import java.util.List;
+import java.util.Set;
 
 public interface QuestradeWebClient {
     AuthenticationToken authenticate(String refreshToken);
 
-    List<Account> getAccounts(AuthenticationToken authToken);
+    Set<Account> getAccounts(AuthenticationToken authToken);
 
-    List<Position> getPositions(AuthenticationToken authToken, Account account);
+    Set<Position> getPositions(AuthenticationToken authToken, Account account);
 
-    List<Candle> getCandles(AuthenticationToken authToken, Position position, RequestPeriod period);
+    Set<Candle> getCandles(AuthenticationToken authToken, Position position, RequestPeriod period);
 
-    List<Activity> getAccountActivities(AuthenticationToken authToken, Account account, RequestPeriod period);
+    Set<Activity> getAccountActivities(AuthenticationToken authToken, Account account, RequestPeriod period);
 }
