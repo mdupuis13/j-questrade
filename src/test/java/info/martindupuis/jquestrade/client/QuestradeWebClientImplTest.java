@@ -84,15 +84,13 @@ class QuestradeWebClientImplTest {
     void givenIAmAuthenticated_callingGetAccounts_returnsListOfAccounts() {
         AuthenticationToken authToken = getValidTestAuthToken();
 
-        List<Account> result = sut.getAccounts(authToken);
+        List<Account> result = sut.getAccounts(authToken).stream().toList();
 
         assertThat(result).hasSize(2);
-        assertThatList(result).first()
-                .hasFieldOrPropertyWithValue("type", "TFSA")
-                .hasFieldOrPropertyWithValue("number", "99912345");
-        assertThatList(result).last()
-                .hasFieldOrPropertyWithValue("type", "RRSP")
-                .hasFieldOrPropertyWithValue("number", "99912346");
+        assertThatList(result).filteredOn(e -> e.number().equals("99912345")).first()
+                .hasFieldOrPropertyWithValue("type", "TFSA");
+        assertThatList(result).filteredOn(e -> e.number().equals("99912346")).first()
+                .hasFieldOrPropertyWithValue("type", "RRSP");
     }
 
     @Test
@@ -109,7 +107,7 @@ class QuestradeWebClientImplTest {
 
         Account anAccount = Instancio.create(Account.class);
 
-        List<Position> result = sut.getPositions(authToken, anAccount);
+        List<Position> result = sut.getPositions(authToken, anAccount).stream().toList();
 
         assertThat(result).hasSize(1);
         assertThat(result.getFirst())
@@ -123,7 +121,7 @@ class QuestradeWebClientImplTest {
         RequestPeriod aPeriod = getValidPeriod();
         Position aPosition = Instancio.create(Position.class);
 
-        List<Candle> result = sut.getCandles(authToken, aPosition, aPeriod);
+        List<Candle> result = sut.getCandles(authToken, aPosition, aPeriod).stream().toList();
 
         assertThat(result).hasSize(1);
         assertThat(result.getFirst())
@@ -140,7 +138,7 @@ class QuestradeWebClientImplTest {
         RequestPeriod aPeriod = getValidPeriod();
         Account anAccount = Instancio.create(Account.class);
 
-        List<Activity> result = sut.getAccountActivities(authToken, anAccount, aPeriod);
+        List<Activity> result = sut.getAccountActivities(authToken, anAccount, aPeriod).stream().toList();
 
         assertThat(result).hasSize(1);
         assertThat(result.getFirst())
