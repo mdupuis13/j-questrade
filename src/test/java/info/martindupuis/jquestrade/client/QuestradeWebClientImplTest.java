@@ -11,6 +11,7 @@ import org.instancio.Instancio;
 import org.instancio.junit.InstancioExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -36,12 +37,11 @@ class QuestradeWebClientImplTest {
     private static final String TEST_URL_TEMPLATE = "http://localhost:%d/";
 
     @RegisterExtension
-    static WireMockExtension wiremock =
-            WireMockExtension.newInstance()
-                    .options(wireMockConfig().usingFilesUnderDirectory("wiremock")
-                            .globalTemplating(true)
-                            .notifier(new ConsoleNotifier(true))
-                    ).build();
+    static WireMockExtension wiremock = WireMockExtension.newInstance()
+            .options(wireMockConfig().usingFilesUnderDirectory("wiremock")
+                    .globalTemplating(true)
+                    .notifier(new ConsoleNotifier(true)))
+            .build();
     QuestradeWebClient sut;
 
     @Mock
@@ -75,87 +75,12 @@ class QuestradeWebClientImplTest {
         String oldRefreshToken = Instancio.create(String.class);
 
         AuthenticationToken token = sut.authenticate(oldRefreshToken);
-        log.info(token.toString());
+        log.info("Token is {}", token.toString());
 
         assertThat(token.isValid()).isTrue();
     }
 
-    @Test
-    void givenIAmAuthenticated_callingGetAccounts_returnsListOfAccounts() {
-        AuthenticationToken authToken = getValidTestAuthToken();
-
-        List<Account> result = sut.getAccounts(authToken).stream().toList();
-
-        assertThat(result).hasSize(2);
-        assertThatList(result).filteredOn(e -> e.number().equals("99912345")).first()
-                .hasFieldOrPropertyWithValue("type", "TFSA");
-        assertThatList(result).filteredOn(e -> e.number().equals("99912346")).first()
-                .hasFieldOrPropertyWithValue("type", "RRSP");
-    }
-
-    @Test
-    void givenAuthenticationHasExpired_callingGetAccounts_throwsAuthenticationExpiredException() {
-        AuthenticationToken authToken = getExpiredTestAuthToken();
-
-        assertThatExceptionOfType(AuthenticationExpiredException.class).isThrownBy(() -> sut.getAccounts(authToken))
-                .withMessageContaining("expired");
-    }
-
-    @Test
-    void givenIAmAuthenticated_callingGetPositionsWithAnAccount_returnsListOfPositions() {
-        AuthenticationToken authToken = getValidTestAuthToken();
-
-        Account anAccount = Instancio.create(Account.class);
-
-        List<Position> result = sut.getPositions(authToken, anAccount).stream().toList();
-
-        assertThat(result).hasSize(1);
-        assertThat(result.getFirst())
-                .hasFieldOrPropertyWithValue("symbol", "THI.TO")
-                .hasFieldOrPropertyWithValue("currentPrice", 60.17);
-    }
-
-    @Test
-    void givenIAmAuthenticated_callingGetQuotes_returnsListOfPricesForPeriod() {
-        AuthenticationToken authToken = getValidTestAuthToken();
-        RequestPeriod aPeriod = getValidPeriod();
-        Position aPosition = Instancio.create(Position.class);
-
-        List<Candle> result = sut.getCandles(authToken, aPosition, aPeriod).stream().toList();
-
-        assertThat(result).hasSize(1);
-        assertThat(result.getFirst())
-                .hasFieldOrPropertyWithValue("low", 70.3)
-                .hasFieldOrPropertyWithValue("high", 70.78)
-                .hasFieldOrPropertyWithValue("open", 70.68)
-                .hasFieldOrPropertyWithValue("close", 70.73)
-                .hasFieldOrPropertyWithValue("volume", 983609);
-    }
-
-    @Test
-    void givenIAmAuthenticated_callingGetActivities_returnsListOfActivitiesForPeriod() {
-        AuthenticationToken authToken = getValidTestAuthToken();
-        RequestPeriod aPeriod = getValidPeriod();
-        Account anAccount = Instancio.create(Account.class);
-
-        List<Activity> result = sut.getAccountActivities(authToken, anAccount, aPeriod).stream().toList();
-
-        assertThat(result).hasSize(1);
-        assertThat(result.getFirst())
-                .hasFieldOrPropertyWithValue("type", "Interest");
-    }
-
-    @Test
-    void givenIAmAuthenticated_callingGetActivitiesWithToBigPeriod_throwsArgumentException() {
-        AuthenticationToken authToken = getValidTestAuthToken();
-        RequestPeriod aPeriod = getInvalidPeriod_ForAccountActivities();
-        Account anAccount = Instancio.create(Account.class);
-
-        assertThatExceptionOfType(TimeRangeException.class).isThrownBy(() -> sut.getAccountActivities(authToken, anAccount, aPeriod))
-                .withMessageContaining("Invalid period. Account activities are limited to 30 days.");
-    }
-
-    private AuthenticationToken getValidTestAuthToken() {
+     private AuthenticationToken getValidTestAuthToken() {
         return Instancio.of(AuthenticationToken.class)
                 .set(field(AuthenticationToken::api_server), testServerUrl)
                 .set(field(AuthenticationToken::access_token), ACCESS_TOKEN)
@@ -170,5 +95,88 @@ class QuestradeWebClientImplTest {
                 .set(field(AuthenticationToken::access_token), ACCESS_TOKEN)
                 .generate(field(AuthenticationToken::expires_at), gen -> gen.temporal().zonedDateTime().past())
                 .create();
+    }   
+    
+    @Nested
+    class givenIAmAuthenticated {
+        private AuthenticationToken validAuthToken;
+
+
+        @BeforeEach
+        void init() {
+            validAuthToken = getValidTestAuthToken();
+        }
+
+        @Test
+        void callingGetAccounts_returnsListOfAccounts() {
+            List<Account> result = sut.getAccounts(validAuthToken).stream().toList();
+
+            assertThat(result).hasSize(2);
+            assertThatList(result).filteredOn(e -> e.number().equals("99912345")).first()
+                    .hasFieldOrPropertyWithValue("type", "TFSA");
+            assertThatList(result).filteredOn(e -> e.number().equals("99912346")).first()
+                    .hasFieldOrPropertyWithValue("type", "RRSP");
+        }
+
+        @Test
+        void givenAuthenticationHasExpired_callingGetAccounts_throwsAuthenticationExpiredException() {
+            AuthenticationToken expiredAuthToken = getExpiredTestAuthToken();
+
+            assertThatExceptionOfType(AuthenticationExpiredException.class)
+                    .isThrownBy(() -> sut.getAccounts(expiredAuthToken))
+                    .withMessageContaining("expired");
+        }
+
+        @Test
+        void callingGetPositionsWithAnAccount_returnsListOfPositions() {
+            Account anAccount = Instancio.create(Account.class);
+
+            List<Position> result = sut.getPositions(validAuthToken, anAccount).stream().toList();
+
+            assertThat(result).hasSize(1);
+            assertThat(result.getFirst())
+                    .hasFieldOrPropertyWithValue("symbol", "THI.TO")
+                    .hasFieldOrPropertyWithValue("currentPrice", 60.17);
+        }
+
+        @Test
+        void callingGetQuotes_returnsListOfPricesForPeriod() {
+            RequestPeriod aPeriod = getValidPeriod();
+            Position aPosition = Instancio.create(Position.class);
+
+            List<Candle> result = sut.getCandles(validAuthToken, aPosition, aPeriod).stream().toList();
+
+            assertThat(result).hasSize(1);
+            assertThat(result.getFirst())
+                    .hasFieldOrPropertyWithValue("low", 70.3)
+                    .hasFieldOrPropertyWithValue("high", 70.78)
+                    .hasFieldOrPropertyWithValue("open", 70.68)
+                    .hasFieldOrPropertyWithValue("close", 70.73)
+                    .hasFieldOrPropertyWithValue("volume", 983609);
+        }
+
+        @Test
+        void callingGetActivities_returnsListOfActivitiesForPeriod() {
+            RequestPeriod aPeriod = getValidPeriod();
+            Account anAccount = Instancio.create(Account.class);
+
+            List<Activity> result = sut.getAccountActivities(validAuthToken, anAccount, aPeriod).stream().toList();
+
+            assertThat(result).hasSize(1);
+            assertThat(result.getFirst())
+                    .hasFieldOrPropertyWithValue("type", "Interest");
+        }
+
+        @Test
+        void callingGetActivitiesWithToBigPeriod_throwsArgumentException() {
+            RequestPeriod aPeriod = getInvalidPeriod_ForAccountActivities();
+            Account anAccount = Instancio.create(Account.class);
+
+            assertThatExceptionOfType(TimeRangeException.class)
+                    .isThrownBy(() -> sut.getAccountActivities(validAuthToken, anAccount, aPeriod))
+                    .withMessageContaining("Invalid period. Account activities are limited to 30 days.");
+        }
     }
+
+
 }

@@ -24,7 +24,7 @@
     "transformers": ["response-template"],
     "headers": {
       "Content-Type": "application/json; charset=utf-8",
-      "date": "{{now timezone='Europe/London' format='EEE, dd MMM yyyy HH:mm:ss zzz'}}"
+      "date": "{{now timezone='UTC' format='EEE, dd MMM yyyy HH:mm:ss zzz'}}"
     }
   }
 }
