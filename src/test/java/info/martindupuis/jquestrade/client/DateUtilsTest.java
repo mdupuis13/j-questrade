@@ -28,7 +28,7 @@ class DateUtilsTest {
 
         memoryAppender = new MemoryAppender();
         memoryAppender.setContext((LoggerContext) LoggerFactory.getILoggerFactory());
-        logger.setLevel(Level.INFO);
+        logger.setLevel(Level.DEBUG);
         logger.addAppender(memoryAppender);
         memoryAppender.start();
     }
@@ -39,7 +39,7 @@ class DateUtilsTest {
     }
     @Test
     void dateFromQuestradeHeader_whenTranslated_isAtLocalDateTime() {
-        String dateReceived = ZonedDateTime.now(ZoneId.of("GMT")).format(DateUtils.DATE_HEADER_FORMAT);
+        String dateReceived = ZonedDateTime.now(ZoneId.of("UTC")).format(DateUtils.DATE_HEADER_FORMAT);
 
         ZonedDateTime result = DateUtils.parseHeaderDateToLocalOffsetDateTime(dateReceived);
 
