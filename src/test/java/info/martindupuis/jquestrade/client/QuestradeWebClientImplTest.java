@@ -66,11 +66,6 @@ class QuestradeWebClientImplTest {
     }
 
     @Test
-    void canInstantiate() {
-        assertThat(sut).isNotNull();
-    }
-
-    @Test
     void givenValidCredentials_WhenITryToAuthenticate_IGetAnAccessToken() {
         String oldRefreshToken = Instancio.create(String.class);
 
@@ -101,7 +96,6 @@ class QuestradeWebClientImplTest {
     class givenIAmAuthenticated {
         private AuthenticationToken validAuthToken;
 
-
         @BeforeEach
         void init() {
             validAuthToken = getValidTestAuthToken();
@@ -125,6 +119,28 @@ class QuestradeWebClientImplTest {
             assertThatExceptionOfType(AuthenticationExpiredException.class)
                     .isThrownBy(() -> sut.getAccounts(expiredAuthToken))
                     .withMessageContaining("expired");
+        }
+
+        @Test
+        void callingGetActivities_returnsListOfActivitiesForPeriod() {
+            RequestPeriod aPeriod = getValidPeriod();
+            Account anAccount = Instancio.create(Account.class);
+
+            List<Activity> result = sut.getAccountActivities(validAuthToken, anAccount, aPeriod).stream().toList();
+
+            assertThat(result).hasSize(1);
+            assertThat(result.getFirst())
+                    .hasFieldOrPropertyWithValue("type", "Interest");
+        }
+
+        @Test
+        void callingGetActivitiesWithTooBigPeriod_throwsArgumentException() {
+            RequestPeriod aPeriodOfMoreThan30Days = getInvalidPeriod_ForAccountActivities();
+            Account anAccount = Instancio.create(Account.class);
+
+            assertThatExceptionOfType(TimeRangeException.class)
+                    .isThrownBy(() -> sut.getAccountActivities(validAuthToken, anAccount, aPeriodOfMoreThan30Days))
+                    .withMessageContaining("Invalid period. Account activities are limited to 30 days.");
         }
 
         @Test
@@ -154,29 +170,5 @@ class QuestradeWebClientImplTest {
                     .hasFieldOrPropertyWithValue("close", 70.73)
                     .hasFieldOrPropertyWithValue("volume", 983609);
         }
-
-        @Test
-        void callingGetActivities_returnsListOfActivitiesForPeriod() {
-            RequestPeriod aPeriod = getValidPeriod();
-            Account anAccount = Instancio.create(Account.class);
-
-            List<Activity> result = sut.getAccountActivities(validAuthToken, anAccount, aPeriod).stream().toList();
-
-            assertThat(result).hasSize(1);
-            assertThat(result.getFirst())
-                    .hasFieldOrPropertyWithValue("type", "Interest");
-        }
-
-        @Test
-        void callingGetActivitiesWithToBigPeriod_throwsArgumentException() {
-            RequestPeriod aPeriod = getInvalidPeriod_ForAccountActivities();
-            Account anAccount = Instancio.create(Account.class);
-
-            assertThatExceptionOfType(TimeRangeException.class)
-                    .isThrownBy(() -> sut.getAccountActivities(validAuthToken, anAccount, aPeriod))
-                    .withMessageContaining("Invalid period. Account activities are limited to 30 days.");
-        }
     }
-
-
 }
