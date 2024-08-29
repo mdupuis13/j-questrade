@@ -3,9 +3,14 @@ package info.martindupuis.UtilsForTests;
 import info.martindupuis.UtilsForTests.CustomGenerators.RequestPeriodGenerator;
 import info.martindupuis.jquestrade.client.RequestPeriod;
 import org.instancio.Instancio;
+import org.instancio.settings.SettingKey;
+import org.instancio.settings.Settings;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Map;
+import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import static org.instancio.Select.all;
 
@@ -28,9 +33,12 @@ public class RequestPeriodUtils {
     }
 
     public static RequestPeriod getInvalidPeriod_ForAccountActivities() {
+        RandomGenerator random = new Random();
+        int periodOfMoreThan30Days = random.nextInt(31,65);
+
         return new RequestPeriod(ZonedDateTime.now()
                                               .withZoneSameLocal(ZoneId.systemDefault())
-                                              .minusDays(40),
+                                              .minusDays(periodOfMoreThan30Days),
                                  ZonedDateTime.now()
                                               .withZoneSameLocal(ZoneId.systemDefault()));
     }
