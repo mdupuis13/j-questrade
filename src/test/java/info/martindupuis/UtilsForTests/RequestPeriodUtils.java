@@ -3,12 +3,9 @@ package info.martindupuis.UtilsForTests;
 import info.martindupuis.UtilsForTests.CustomGenerators.RequestPeriodGenerator;
 import info.martindupuis.jquestrade.client.RequestPeriod;
 import org.instancio.Instancio;
-import org.instancio.settings.SettingKey;
-import org.instancio.settings.Settings;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Map;
 import java.util.Random;
 import java.util.random.RandomGenerator;
 
