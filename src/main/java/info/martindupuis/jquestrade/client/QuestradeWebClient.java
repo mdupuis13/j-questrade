@@ -9,9 +9,9 @@ public interface QuestradeWebClient {
 
     Set<Account> getAccounts(AuthenticationToken authToken);
 
+    Set<Activity> getAccountActivities(AuthenticationToken authToken, Account account, RequestPeriod period);
+
     Set<Position> getPositions(AuthenticationToken authToken, Account account);
 
-    Set<Candle> getCandles(AuthenticationToken authToken, Position position, RequestPeriod period);
-
-    Set<Activity> getAccountActivities(AuthenticationToken authToken, Account account, RequestPeriod period);
+    Set<Candle> getPositionCandles(AuthenticationToken authToken, Position position, RequestPeriod period);
 }

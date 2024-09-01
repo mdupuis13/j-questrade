@@ -160,7 +160,7 @@ class QuestradeWebClientImplTest {
             RequestPeriod aPeriod = getValidPeriod();
             Position aPosition = Instancio.create(Position.class);
 
-            List<Candle> result = sut.getCandles(validAuthToken, aPosition, aPeriod).stream().toList();
+            List<Candle> result = sut.getPositionCandles(validAuthToken, aPosition, aPeriod).stream().toList();
 
             assertThat(result).hasSize(1);
             assertThat(result.getFirst())
