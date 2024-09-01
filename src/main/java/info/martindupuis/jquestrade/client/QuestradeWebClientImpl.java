@@ -73,7 +73,7 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
     }
 
     @Override
-    public Set<Candle> getCandles(AuthenticationToken authToken, Position position, RequestPeriod period) {
+    public Set<Candle> getPositionCandles(AuthenticationToken authToken, Position position, RequestPeriod period) {
         log.info("QuestradeWebClient: entryPoint=getCandles position=%s requestPeriod=%s)".formatted(position.symbol(), period));
 
         //  v1/markets/candles/38738?startTime=2014-10-01T00:00:00-05:00&endTime=2014-10-20T23:59:59-05:00&interval=OneDay
