@@ -27,7 +27,7 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
      * Date formatter object for converting <code>ZonedDateTime</code> objects to strings in the
      * ISO 8601 time format.
      */
-    private static final DateTimeFormatter ISO_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
+    //private static final DateTimeFormatter ISO_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
 
     private final RestClient authenticationClient;
     private final RestClient apiClient;
