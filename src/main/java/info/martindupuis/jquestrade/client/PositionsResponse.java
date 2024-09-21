@@ -1,10 +1,10 @@
 package info.martindupuis.jquestrade.client;
 
-import info.martindupuis.jquestrade.Position;
+import info.martindupuis.jquestrade.QuestradePosition;
 
 import java.util.Set;
 
 record PositionsResponse(
-        Set<Position> positions,
+        Set<QuestradePosition> positions,
         int userId) {
 }

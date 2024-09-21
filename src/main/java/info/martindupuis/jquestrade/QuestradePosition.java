@@ -18,16 +18,16 @@ package info.martindupuis.jquestrade;
  * @see <a href="https://www.questrade.com/api/documentation/rest-operations/account-calls/accounts-id-positions">
  * The positions documentation</a>
  */
-public record Position(
-        String symbol,
-        int symbolId,
-        int openQuantity,
-        int closedQuantity,
-        double currentMarketValue,
-        double currentPrice,
-        double averageEntryPrice,
-        double closedPnl,
-        double openPnl,
-        double totalCost,
-        boolean isRealTime,
-        boolean isUnderReorg) {}
+public record QuestradePosition(String symbol,
+                                int symbolId,
+                                int openQuantity,
+                                int closedQuantity,
+                                double currentMarketValue,
+                                double currentPrice,
+                                double averageEntryPrice,
+                                double closedPnl,
+                                double openPnl,
+                                double totalCost,
+                                boolean isRealTime,
+                                boolean isUnderReorg) {
+}
