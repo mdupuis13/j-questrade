@@ -86,6 +86,6 @@ class AuthenticationTokenTest {
                 .generate(field("expires_at"), gen -> gen.temporal().zonedDateTime().future())
                 .create();
 
-        assertThat(sut.getAuthHeader()).contains("Bearer my-access-token");
+        assertThat(sut.getAuthHeader()).contains("Bearer my-axxxxxoken");
     }
 }

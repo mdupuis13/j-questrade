@@ -23,10 +23,10 @@ import java.time.ZonedDateTime;
  */
 @Slf4j
 public record AuthenticationToken(String access_token,
-        String api_server,
-        ZonedDateTime expires_at,
-        String refresh_token,
-        String token_type) {
+                                  String api_server,
+                                  ZonedDateTime expires_at,
+                                  String refresh_token,
+                                  String token_type) {
 
     /*
      * An authorization is valid if:
@@ -45,13 +45,13 @@ public record AuthenticationToken(String access_token,
 
         log.debug(
                 "QuestradeWebClient: class=AuthenticationToken action=isExpired() local now ({}) is after local expiration ({}) ?",
-                localNow, 
+                localNow,
                 localExpiration);
 
         return localNow.isAfter(localExpiration);
     }
 
     public String getAuthHeader() {
-        return String.format("Bearer %s",access_token);
+        return String.format("Bearer %s", "%sxxxxx%s".formatted(access_token.substring(0,4), access_token.substring(access_token.length()-4)));
     }
 }
