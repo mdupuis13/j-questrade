@@ -7,11 +7,11 @@ import java.util.Set;
 public interface QuestradeWebClient {
     AuthenticationToken authenticate(String refreshToken);
 
-    Set<Account> getAccounts(AuthenticationToken authToken);
+    Set<QuestradeAccount> getAccounts(AuthenticationToken authToken);
 
-    Set<Activity> getAccountActivities(AuthenticationToken authToken, Account account, RequestPeriod period);
+    Set<QuestradeActivity> getAccountActivities(AuthenticationToken authToken, QuestradeAccount account, RequestPeriod period);
 
-    Set<Position> getPositions(AuthenticationToken authToken, Account account);
+    Set<QuestradePosition> getPositions(AuthenticationToken authToken, QuestradeAccount account);
 
-    Set<Candle> getPositionCandles(AuthenticationToken authToken, Position position, RequestPeriod period);
+    Set<QuestradeCandle> getPositionCandles(AuthenticationToken authToken, QuestradePosition position, RequestPeriod period);
 }

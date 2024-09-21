@@ -14,7 +14,7 @@ package info.martindupuis.jquestrade;
  * @see <a href="https://www.questrade.com/api/documentation/rest-operations/market-calls/markets-candles-id">
  * Candles API documentation</a> for more insight.
  */
-public record Candle(
+public record QuestradeCandle(
         String start,
         String end,
         double low,

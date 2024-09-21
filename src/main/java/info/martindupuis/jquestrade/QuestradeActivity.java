@@ -33,17 +33,17 @@ package info.martindupuis.jquestrade;
  * @see <a href="https://www.questrade.com/api/documentation/rest-operations/account-calls/accounts-id-activities">
  * The activity properties documentation</a>
  */
-public record Activity(String tradeDate,
-                       String transactionDate,
-                       String settlementDate,
-                       String action,
-                       String symbol,
-                       int symbolId,
-                       String description,
-                       String currency,
-                       double quantity,
-                       double price,
-                       double grossAmount,
-                       double commission,
-                       double netAmount,
-                       String type) {}
+public record QuestradeActivity(String tradeDate,
+                                String transactionDate,
+                                String settlementDate,
+                                String action,
+                                String symbol,
+                                int symbolId,
+                                String description,
+                                String currency,
+                                double quantity,
+                                double price,
+                                double grossAmount,
+                                double commission,
+                                double netAmount,
+                                String type) {}

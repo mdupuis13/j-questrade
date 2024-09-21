@@ -1,9 +1,9 @@
 package info.martindupuis.jquestrade.client;
 
-import info.martindupuis.jquestrade.Candle;
+import info.martindupuis.jquestrade.QuestradeCandle;
 
 import java.util.Set;
 
 public record CandlesResponse(
-        Set<Candle> candles,
+        Set<QuestradeCandle> candles,
         int userId) {}

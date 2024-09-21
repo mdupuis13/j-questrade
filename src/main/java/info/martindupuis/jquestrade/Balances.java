@@ -8,10 +8,10 @@ package info.martindupuis.jquestrade;
  */
 public class Balances {
 
-    private Balance[] perCurrencyBalances;
-    private Balance[] combinedBalances;
-    private Balance[] sodPerCurrencyBalances;
-    private Balance[] sodCombinedBalances;
+    private QuestradeBalance[] perCurrencyBalances;
+    private QuestradeBalance[] combinedBalances;
+    private QuestradeBalance[] sodPerCurrencyBalances;
+    private QuestradeBalance[] sodCombinedBalances;
 
     public Balances() {
     }
@@ -25,7 +25,7 @@ public class Balances {
      * @return A {@code Balance} object representing only the account's
      * balance that is in the given currency.
      */
-    public Balance getPerCurrencyBalances(Currency currency) {
+    public QuestradeBalance getPerCurrencyBalances(Currency currency) {
         if (currency == Currency.CAD) {
             return perCurrencyBalances[0];
         }
@@ -39,7 +39,7 @@ public class Balances {
      * @return A {@code Balance} object representing the account's total balance,
      * displayed the given currency.
      */
-    public Balance getCombinedBalances(Currency currency) {
+    public QuestradeBalance getCombinedBalances(Currency currency) {
         if (currency == Currency.CAD) {
             return combinedBalances[0];
         }
@@ -56,7 +56,7 @@ public class Balances {
      * @return A {@code Balance} object representing only the account's start-of-day
      * balance that is in the given currency.
      */
-    public Balance getSodPerCurrencyBalances(Currency currency) {
+    public QuestradeBalance getSodPerCurrencyBalances(Currency currency) {
         if (currency == Currency.CAD) {
             return sodPerCurrencyBalances[0];
         }
@@ -73,7 +73,7 @@ public class Balances {
      * @return A {@code Balance} object representing the account's start-of-day total balance,
      * displayed the given currency.
      */
-    public Balance getSodCombinedBalances(Currency currency) {
+    public QuestradeBalance getSodCombinedBalances(Currency currency) {
         if (currency == Currency.CAD) {
             return sodCombinedBalances[0];
         }
