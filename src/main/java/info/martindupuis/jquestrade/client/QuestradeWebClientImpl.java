@@ -19,7 +19,7 @@ import java.util.Set;
 @Service
 public class QuestradeWebClientImpl implements QuestradeWebClient {
 
-    private static final String API_V1_TEMPLATE = "%s/v1/%s";
+    private static final String API_V1_TEMPLATE = "%sv1/%s";
     private static final DateTimeFormatter DATE_FORMATTER_FOR_URL = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
     private static final DateTimeFormatter DATE_FORMATTER_FOR_LOG = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
@@ -54,7 +54,7 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
     }
 
     @Override
-    public Set<Account> getAccounts(AuthenticationToken authToken) {
+    public Set<QuestradeAccount> getAccounts(AuthenticationToken authToken) {
         log.info("QuestradeWebClient: entryPoint=getAccounts");
 
         ResponseEntity<AccountResponse> response =
@@ -64,8 +64,9 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
     }
 
     @Override
-    public Set<Position> getPositions(AuthenticationToken authToken, Account account) {
+    public Set<QuestradePosition> getPositions(AuthenticationToken authToken, QuestradeAccount account) {
         log.info("QuestradeWebClient: entryPoint=getPositions account=*****");
+
         ResponseEntity<PositionsResponse> response =
                 callQuestrade(authToken, "accounts/%s/positions".formatted(account.number())).toEntity(PositionsResponse.class);
 
@@ -73,7 +74,7 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
     }
 
     @Override
-    public Set<Candle> getPositionCandles(AuthenticationToken authToken, Position position, RequestPeriod period) {
+    public Set<QuestradeCandle> getPositionCandles(AuthenticationToken authToken, QuestradePosition position, RequestPeriod period) {
         log.info("QuestradeWebClient: entryPoint=getCandles position=%s requestPeriod=%s)".formatted(position.symbol(), period));
 
         //  v1/markets/candles/38738?startTime=2014-10-01T00:00:00-05:00&endTime=2014-10-20T23:59:59-05:00&interval=OneDay
@@ -87,7 +88,7 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
     }
 
     @Override
-    public Set<Activity> getAccountActivities(AuthenticationToken authToken, Account account, RequestPeriod period) {
+    public Set<QuestradeActivity> getAccountActivities(AuthenticationToken authToken, QuestradeAccount account, RequestPeriod period) {
         log.info("QuestradeWebClient: entryPoint=getAccountActivities (token, account=***** requestPeriod=%s)".formatted(period));
 
         if (period.getDaysInBetween() < 1 || period.getDaysInBetween() > 30)
@@ -107,9 +108,13 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
         if (authToken.isExpired())
             throw new AuthenticationExpiredException("Authentication has expired at %s".formatted(authToken.expires_at()));
 
+        String uri = API_V1_TEMPLATE.formatted(authToken.api_server(), resource);
+        String authHeader = authToken.getAuthHeader();
+        log.info("QuestradeWebClient: uri={} header={}", uri, authHeader);
+
         return apiClient.get()
-                        .uri(API_V1_TEMPLATE.formatted(authToken.api_server(), resource))
-                        .header("Authorization", "Bearer %s".formatted(authToken.access_token()))
+                        .uri(uri)
+                        .header("Authorization", authHeader)
                         .retrieve();
     }
 
