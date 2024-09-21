@@ -10,10 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.instancio.Instancio;
 import org.instancio.Model;
 import org.instancio.junit.InstancioExtension;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mock;
@@ -135,7 +132,7 @@ class QuestradeWebClientImplTest {
             RequestPeriod aPeriod = getValidPeriod();
             QuestradeAccount anAccount = Instancio.create(QuestradeAccount.class);
 
-            List<Activity> result = sut.getAccountActivities(validAuthToken, anAccount, aPeriod).stream().toList();
+            List<QuestradeActivity> result = sut.getAccountActivities(validAuthToken, anAccount, aPeriod).stream().toList();
 
             assertThat(result).hasSize(1);
             assertThat(result.getFirst())
@@ -156,7 +153,7 @@ class QuestradeWebClientImplTest {
         void callingGetPositionsWithAnAccount_returnsListOfPositions() {
             QuestradeAccount anAccount = Instancio.create(QuestradeAccount.class);
 
-            List<Position> result = sut.getPositions(validAuthToken, anAccount).stream().toList();
+            List<QuestradePosition> result = sut.getPositions(validAuthToken, anAccount).stream().toList();
 
             assertThat(result).hasSize(1);
             assertThat(result.getFirst())
@@ -167,9 +164,9 @@ class QuestradeWebClientImplTest {
         @Test
         void callingGetQuotes_returnsListOfPricesForPeriod() {
             RequestPeriod aPeriod = getValidPeriod();
-            Position aPosition = Instancio.create(Position.class);
+            QuestradePosition aPosition = Instancio.create(QuestradePosition.class);
 
-            List<Candle> result = sut.getPositionCandles(validAuthToken, aPosition, aPeriod).stream().toList();
+            List<QuestradeCandle> result = sut.getPositionCandles(validAuthToken, aPosition, aPeriod).stream().toList();
 
             assertThat(result).hasSize(1);
             assertThat(result.getFirst())
