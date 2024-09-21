@@ -108,9 +108,11 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
         if (authToken.isExpired())
             throw new AuthenticationExpiredException("Authentication has expired at %s".formatted(authToken.expires_at()));
 
+        log.info("QuestradeWebClient: action=callQuestrade(..., {})", resource);
+
         String uri = API_V1_TEMPLATE.formatted(authToken.api_server(), resource);
         String authHeader = authToken.getAuthHeader();
-        log.info("QuestradeWebClient: uri={} header={}", uri, authHeader);
+        log.debug("QuestradeWebClient: uri={} header={}", uri, authHeader);
 
         return apiClient.get()
                         .uri(uri)
