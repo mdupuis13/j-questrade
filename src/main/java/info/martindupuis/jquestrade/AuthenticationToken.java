@@ -1,9 +1,9 @@
 package info.martindupuis.jquestrade;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Represents the data that allows an application to make requests the Questrade
@@ -49,5 +49,9 @@ public record AuthenticationToken(String access_token,
                 localExpiration);
 
         return localNow.isAfter(localExpiration);
+    }
+
+    public String getAuthHeader() {
+        return String.format("Bearer %s",access_token);
     }
 }

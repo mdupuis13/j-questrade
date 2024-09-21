@@ -79,4 +79,13 @@ class AuthenticationTokenTest {
         assertThat(sut.isExpired()).isTrue();
     }
 
+    @Test
+    void givenAuthValid_getAuthHeader_returns() {
+        AuthenticationToken sut = Instancio.of(AuthenticationToken.class)
+                .set(field(AuthenticationToken::access_token), "my-access-token")
+                .generate(field("expires_at"), gen -> gen.temporal().zonedDateTime().future())
+                .create();
+
+        assertThat(sut.getAuthHeader()).contains("Bearer my-access-token");
+    }
 }
