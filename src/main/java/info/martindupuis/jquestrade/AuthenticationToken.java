@@ -52,6 +52,6 @@ public record AuthenticationToken(String access_token,
     }
 
     public String getAuthHeader() {
-        return String.format("Bearer %s", "%sxxxxx%s".formatted(access_token.substring(0,4), access_token.substring(access_token.length()-4)));
+        return String.format("Bearer %s", access_token);
     }
 }
