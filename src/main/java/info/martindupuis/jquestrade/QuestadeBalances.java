@@ -6,14 +6,14 @@ package info.martindupuis.jquestrade;
  * Accounts balances API documentation</a> 
  * for more insight.
  */
-public class Balances {
+public class QuestadeBalances {
 
     private QuestradeBalance[] perCurrencyBalances;
     private QuestradeBalance[] combinedBalances;
     private QuestradeBalance[] sodPerCurrencyBalances;
     private QuestradeBalance[] sodCombinedBalances;
 
-    public Balances() {
+    public QuestadeBalances() {
     }
 
     /**
@@ -92,7 +92,7 @@ public class Balances {
         /**
          * Represents the U.S. dollar.
          */
-        USD;
+        USD
     }
 
 }
