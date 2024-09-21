@@ -8,6 +8,7 @@ import info.martindupuis.jquestrade.exceptions.AuthenticationExpiredException;
 import info.martindupuis.jquestrade.exceptions.TimeRangeException;
 import lombok.extern.slf4j.Slf4j;
 import org.instancio.Instancio;
+import org.instancio.Model;
 import org.instancio.junit.InstancioExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +36,7 @@ class QuestradeWebClientImplTest {
 
     private static final String ACCESS_TOKEN = "my-access-token-123";
     private static final String TEST_URL_TEMPLATE = "http://localhost:%d/";
+    private static Model<AuthenticationToken> validAuthToken;
 
     @RegisterExtension
     static WireMockExtension wiremock = WireMockExtension.newInstance()
@@ -46,8 +48,20 @@ class QuestradeWebClientImplTest {
 
     @Mock
     WebClientProperties webclientProperties;
+
     private String testServerUrl;
     private AutoCloseable closeable;
+
+    @BeforeAll
+    static void setUpAll() {
+        validAuthToken = Instancio.of(AuthenticationToken.class)
+                .set(field(AuthenticationToken::api_server), "test-server-name")
+                .set(field(AuthenticationToken::access_token), ACCESS_TOKEN)
+                .set(field(AuthenticationToken::token_type), "Bearer")
+                .generate(field(AuthenticationToken::expires_at),
+                        generators -> generators.temporal().zonedDateTime().future())
+                .toModel();
+    }
 
     @BeforeEach
     void setUp() {
@@ -75,23 +89,18 @@ class QuestradeWebClientImplTest {
         assertThat(token.isValid()).isTrue();
     }
 
-     private AuthenticationToken getValidTestAuthToken() {
-        return Instancio.of(AuthenticationToken.class)
+    private AuthenticationToken getValidTestAuthToken() {
+        return Instancio.of(validAuthToken)
                 .set(field(AuthenticationToken::api_server), testServerUrl)
-                .set(field(AuthenticationToken::access_token), ACCESS_TOKEN)
-                .generate(field(AuthenticationToken::expires_at),
-                        generators -> generators.temporal().zonedDateTime().future())
                 .create();
     }
 
     private AuthenticationToken getExpiredTestAuthToken() {
-        return Instancio.of(AuthenticationToken.class)
-                .set(field(AuthenticationToken::api_server), testServerUrl)
-                .set(field(AuthenticationToken::access_token), ACCESS_TOKEN)
+        return Instancio.of(validAuthToken)
                 .generate(field(AuthenticationToken::expires_at), gen -> gen.temporal().zonedDateTime().past())
                 .create();
-    }   
-    
+    }
+
     @Nested
     class givenIAmAuthenticated {
         private AuthenticationToken validAuthToken;
@@ -103,7 +112,7 @@ class QuestradeWebClientImplTest {
 
         @Test
         void callingGetAccounts_returnsListOfAccounts() {
-            List<Account> result = sut.getAccounts(validAuthToken).stream().toList();
+            List<QuestradeAccount> result = sut.getAccounts(validAuthToken).stream().toList();
 
             assertThat(result).hasSize(2);
             assertThatList(result).filteredOn(e -> e.number().equals("99912345")).first()
@@ -124,7 +133,7 @@ class QuestradeWebClientImplTest {
         @Test
         void callingGetActivities_returnsListOfActivitiesForPeriod() {
             RequestPeriod aPeriod = getValidPeriod();
-            Account anAccount = Instancio.create(Account.class);
+            QuestradeAccount anAccount = Instancio.create(QuestradeAccount.class);
 
             List<Activity> result = sut.getAccountActivities(validAuthToken, anAccount, aPeriod).stream().toList();
 
@@ -136,7 +145,7 @@ class QuestradeWebClientImplTest {
         @Test
         void callingGetActivitiesWithTooBigPeriod_throwsArgumentException() {
             RequestPeriod aPeriodOfMoreThan30Days = getInvalidPeriod_ForAccountActivities();
-            Account anAccount = Instancio.create(Account.class);
+            QuestradeAccount anAccount = Instancio.create(QuestradeAccount.class);
 
             assertThatExceptionOfType(TimeRangeException.class)
                     .isThrownBy(() -> sut.getAccountActivities(validAuthToken, anAccount, aPeriodOfMoreThan30Days))
@@ -145,7 +154,7 @@ class QuestradeWebClientImplTest {
 
         @Test
         void callingGetPositionsWithAnAccount_returnsListOfPositions() {
-            Account anAccount = Instancio.create(Account.class);
+            QuestradeAccount anAccount = Instancio.create(QuestradeAccount.class);
 
             List<Position> result = sut.getPositions(validAuthToken, anAccount).stream().toList();
 
