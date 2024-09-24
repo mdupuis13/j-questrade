@@ -34,7 +34,7 @@ class RequestPeriodTest {
     void givenValidPeriod_callingGetInterval_returnsTheIntervalBetweenStartAndEnd() {
         RequestPeriod period = RequestPeriodUtils.getValidPeriod();
 
-        Long result = period.getDaysInBetween();
+        Long result = period.numberDaysInBetween();
 
         assertThat(result).isNotZero()
                           .isPositive();

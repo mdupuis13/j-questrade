@@ -16,7 +16,7 @@ public record RequestPeriod(ZonedDateTime periodStart,
             throw new IllegalArgumentException("Start date (%s) must be before or equal to End date (%s).".formatted(periodStart, periodEnd));
     }
 
-    public Long getDaysInBetween() {
+    public Long numberDaysInBetween() {
         return ChronoUnit.DAYS.between(periodStart, periodEnd);
     }
 }

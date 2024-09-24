@@ -91,7 +91,7 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
     public Set<QuestradeActivity> getAccountActivities(AuthenticationToken authToken, QuestradeAccount account, RequestPeriod period) {
         log.info("QuestradeWebClient: entryPoint=getAccountActivities (token, account=***** requestPeriod=%s)".formatted(period));
 
-        if (period.getDaysInBetween() < 1 || period.getDaysInBetween() > 30)
+        if (period.numberDaysInBetween() < 1 || period.numberDaysInBetween() > 30)
             throw new TimeRangeException("Invalid period. Account activities are limited to 30 days. Start: %s  End: %s"
                                                  .formatted(period.periodEnd().format(DATE_FORMATTER_FOR_LOG),
                                                             period.periodEnd().format(DATE_FORMATTER_FOR_LOG)));
