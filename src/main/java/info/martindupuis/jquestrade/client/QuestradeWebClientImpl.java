@@ -75,7 +75,7 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
 
     @Override
     public Set<QuestradeCandle> getPositionCandles(AuthenticationToken authToken, QuestradePosition position, RequestPeriod period) {
-        log.info("QuestradeWebClient: entryPoint=getCandles position=%s requestPeriod=%s)".formatted(position.symbol(), period));
+        log.info("QuestradeWebClient: entryPoint=getCandles position={}, requestPeriod={}", position.symbol(), period);
 
         //  v1/markets/candles/38738?startTime=2014-10-01T00:00:00-05:00&endTime=2014-10-20T23:59:59-05:00&interval=OneDay
         String url = "markets/candles/%s?startTime=%s&endTime=%s&interval=OneDay".formatted(position.symbolId(),
@@ -89,9 +89,9 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
 
     @Override
     public Set<QuestradeActivity> getAccountActivities(AuthenticationToken authToken, QuestradeAccount account, RequestPeriod period) {
-        log.info("QuestradeWebClient: entryPoint=getAccountActivities (token, account=***** requestPeriod=%s)".formatted(period));
+        log.info("QuestradeWebClient: entryPoint=getAccountActivities (token, account=***** requestPeriod=%{}", period);
 
-        if (period.getDaysInBetween() < 1 || period.getDaysInBetween() > 30)
+        if (period.numberDaysInBetween() < 1 || period.numberDaysInBetween() > 29)
             throw new TimeRangeException("Invalid period. Account activities are limited to 30 days. Start: %s  End: %s"
                                                  .formatted(period.periodEnd().format(DATE_FORMATTER_FOR_LOG),
                                                             period.periodEnd().format(DATE_FORMATTER_FOR_LOG)));
