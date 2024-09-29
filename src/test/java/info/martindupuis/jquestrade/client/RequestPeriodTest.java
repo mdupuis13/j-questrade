@@ -4,9 +4,7 @@ import info.martindupuis.UtilsForTests.RequestPeriodUtils;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,7 +45,6 @@ class RequestPeriodTest {
     @Test
     void givenASmallPeriod_callingSplitIntoMoreDays_returnAListOfOne_containingTheSamePeriod() {
         RequestPeriod bigPeriod = RequestPeriodUtils.getValidPeriod();
-//        bigPeriod = new RequestPeriod(bigPeriod.periodStart(), bigPeriod.periodStart().plusYears(1));
 
         int periodLength = bigPeriod.numberDaysInBetween().intValue();
         List<RequestPeriod> result = bigPeriod.splitIntoPeriodsOfXDays( periodLength);
@@ -58,19 +55,19 @@ class RequestPeriodTest {
     }
 
     @Test
-    void givenAOneYearPeriod_callingSplitIntoLessDays_returnAListOf13Periods() {
+    void givenAOneYearPeriod_callingSplitIntoLessDays_returnAListOfPeriods() {
         ZonedDateTime periodStart = ZonedDateTime.of(LocalDateTime.of(2001,1,1,0,0), ZoneId.systemDefault());
-        RequestPeriod bigPeriod = new RequestPeriod(periodStart, periodStart.plusYears(1));
+        RequestPeriod bigPeriod = new RequestPeriod(periodStart, periodStart.plusDays(30));
 
-        List<RequestPeriod> result = bigPeriod.splitIntoPeriodsOfXDays( 30);
+        List<RequestPeriod> result = bigPeriod.splitIntoPeriodsOfXDays( 4);
 
-        assertThat(result).size().isEqualTo(13);
+        assertThat(result).size().isEqualTo(8);
 
         RequestPeriod firstPeriod = Objects.requireNonNull(result).getFirst();
-        assertThat(firstPeriod.numberDaysInBetween()).isEqualTo(30);
+        assertThat(firstPeriod.numberDaysInBetween()).isEqualTo(4);
 
         RequestPeriod lastPeriod = Objects.requireNonNull(result.getLast());
-        assertThat(lastPeriod.numberDaysInBetween()).isEqualTo(5);
+        assertThat(lastPeriod.numberDaysInBetween()).isEqualTo(2);
     }
 
     @Test
@@ -87,4 +84,21 @@ class RequestPeriodTest {
 
         RequestPeriod lastPeriod = Objects.requireNonNull(result.getLast());
         assertThat(lastPeriod.numberDaysInBetween()).isEqualTo(30);
-    }}
+    }
+
+    @Test
+    void givenAPeriodEndingAfterNow_callingSplitIntoLessDays_returnAListOfPeriodsEndingToday() {
+        ZonedDateTime periodStart = ZonedDateTime.of(LocalDate.now().minusDays(3), LocalTime.now(), ZoneId.systemDefault());
+        RequestPeriod bigPeriod = new RequestPeriod(periodStart, periodStart.plusDays(7));
+
+        List<RequestPeriod> result = bigPeriod.splitIntoPeriodsOfXDays(2);
+
+        assertThat(result).size().isEqualTo(2);
+
+        RequestPeriod firstPeriod = Objects.requireNonNull(result).getFirst();
+        assertThat(firstPeriod.numberDaysInBetween()).isEqualTo(2);
+
+        RequestPeriod lastPeriod = Objects.requireNonNull(result.getLast());
+        assertThat(lastPeriod.periodEnd().toLocalDate()).isEqualTo(LocalDate.now());
+    }
+}

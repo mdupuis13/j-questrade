@@ -36,15 +36,28 @@ public record RequestPeriod(ZonedDateTime periodStart,
 
         for (int periodX = 0; periodX < nbPeriods; periodX++) {
             ZonedDateTime newPeriodStart = periodStart.plusDays((long) periodX * xDays);
-            ZonedDateTime newPeriodEnd = newPeriodStart.plusDays(xDays);
 
-            if (newPeriodEnd.isAfter(periodEnd))
-                newPeriodEnd = periodEnd;
+            if (newPeriodStart.isAfter(ZonedDateTime.now()))
+                break;
+
+            ZonedDateTime newPeriodEnd = getNewPeriodEnd(xDays, newPeriodStart);
 
             periods.add(new RequestPeriod(newPeriodStart, newPeriodEnd));
         }
 
         return periods;
+    }
+
+    private ZonedDateTime getNewPeriodEnd(int xDays, ZonedDateTime newPeriodStart) {
+        ZonedDateTime newPeriodEnd = newPeriodStart.plusDays(xDays);
+
+        if (newPeriodEnd.isAfter(periodEnd))
+            newPeriodEnd = periodEnd;
+
+        if (newPeriodEnd.isAfter(ZonedDateTime.now()))
+            newPeriodEnd = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS);
+
+        return newPeriodEnd;
     }
 
 }
