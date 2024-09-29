@@ -2,6 +2,8 @@ package info.martindupuis.jquestrade.client;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represent a request period
@@ -19,4 +21,30 @@ public record RequestPeriod(ZonedDateTime periodStart,
     public Long numberDaysInBetween() {
         return ChronoUnit.DAYS.between(periodStart, periodEnd);
     }
+
+
+    public List<RequestPeriod> splitIntoPeriodsOfXDays(int xDays) {
+        if (this.numberDaysInBetween() <= xDays)
+            return List.of(this);
+
+        int nbPeriods = (int) (this.numberDaysInBetween() / xDays);
+        // add a period if the actual period is not a multiple of xDays
+        nbPeriods += this.numberDaysInBetween() % xDays == 0 ? 0 : 1;
+
+
+        List<RequestPeriod> periods = new ArrayList<>();
+
+        for (int periodX = 0; periodX < nbPeriods; periodX++) {
+            ZonedDateTime newPeriodStart = periodStart.plusDays((long) periodX * xDays);
+            ZonedDateTime newPeriodEnd = newPeriodStart.plusDays(xDays);
+
+            if (newPeriodEnd.isAfter(periodEnd))
+                newPeriodEnd = periodEnd;
+
+            periods.add(new RequestPeriod(newPeriodStart, newPeriodEnd));
+        }
+
+        return periods;
+    }
+
 }
