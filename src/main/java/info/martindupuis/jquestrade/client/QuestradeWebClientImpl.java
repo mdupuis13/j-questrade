@@ -23,6 +23,11 @@ public class QuestradeWebClientImpl implements QuestradeWebClient {
     private static final DateTimeFormatter DATE_FORMATTER_FOR_URL = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
     private static final DateTimeFormatter DATE_FORMATTER_FOR_LOG = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
+    /**
+     * Date formatter object for converting <code>ZonedDateTime</code> objects to strings in the
+     * ISO 8601 time format.
+     */
+    private static final DateTimeFormatter ISO_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
 
     private final RestClient authenticationClient;
     private final RestClient apiClient;
