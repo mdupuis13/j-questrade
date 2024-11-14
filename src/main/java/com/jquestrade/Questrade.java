@@ -26,7 +26,7 @@ public interface Questrade {
     /**
      * Starts up the API connection by exchanging the refresh token for an access token. You must call this method before
      * calling any methods that perform API requests.
-     * This will create an {@link Authorization} for this object. Calling this method more than one time has no effect.
+     * This will create an {@link AuthenticationToken} for this object. Calling this method more than one time has no effect.
      *
      * @return A reference to the calling object, for optional method chaining.<br>
      * Example: {@code Questrade q = new Questrade(token).activate();}
@@ -45,10 +45,10 @@ public interface Questrade {
 
     /**
      * Forcefully refreshes the authorization (which includes the access token) with the refresh token saved within the object.
-     * Calling this function will save the resulting {@link Authorization} object to be relayed to <i>authorization relay function</i>
+     * Calling this function will save the resulting {@link AuthenticationToken} object to be relayed to <i>authorization relay function</i>
      * (if set using the {@link #setAuthRelay(Consumer)} method).<br><br>
      * For reference, an access token usually expires in 1800 seconds (30 minutes). This value can be retrieved by using
-     * {@link #getAuthorization()} then the {@link Authorization#getExpires_in()} method.
+     * {@link #getAuthorization()} then the {@link AuthenticationToken#expires_in()} method.
      *
      * @throws RefreshTokenException If the refresh token is invalid.
      * @throws StatusCodeException   If an error occurs when contacting the Questrade API.
@@ -56,15 +56,15 @@ public interface Questrade {
     void retrieveAccessToken() throws RefreshTokenException;
 
     /**
-     * Returns an {@link Authorization} object which contains the access token, api server,
+     * Returns an {@link AuthenticationToken} object which contains the access token, api server,
      * access token expiry time, new refresh token, and the access token type (which is always Bearer).<br><br>
      *
      * @return The current {@code Authorization} object. Will be {@code null} if {@link #activate(String)} has not been called yet.
      */
-    Authorization getAuthorization();
+    AuthenticationToken getAuthorization();
 
     /**
-     * Sets the authorization relay function, which is user-created method to which an {@link Authorization} object is relayed to.
+     * Sets the authorization relay function, which is user-created method to which an {@link AuthenticationToken} object is relayed to.
      * This is useful for when you want to save the new refresh token instead of having to manually generate a new one on the Questrade website
      * every time you use your application. For example, you could relay the {@code Authorization} object to a method that saved the new refresh
      * token in a text file, so that the refresh token could be used when creating another {@code Questrade} object.<br><br>
@@ -78,7 +78,7 @@ public interface Questrade {
      * @return A reference to the calling object, for optional method chaining.<br>
      * Example: {@code Questrade q = new Questrade(token).setAuthRelay(function);}
      */
-    Questrade setAuthRelay(Consumer<Authorization> authRelayFunction);
+    Questrade setAuthRelay(Consumer<AuthenticationToken> authRelayFunction);
 
     /**
      * Get the balances for the given account.
