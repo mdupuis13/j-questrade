@@ -1,0 +1,8 @@
+bin/
+build/
+.gradle
+.settings
+target
+.project
+.classpath
+src/test/java/App.java
