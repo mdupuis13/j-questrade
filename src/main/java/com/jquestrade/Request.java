@@ -1,5 +1,7 @@
 package com.jquestrade;
 
+import lombok.Setter;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -13,27 +15,27 @@ class Request {
 		POST;
 	}
 	
+	@Setter
 	private String accessToken;
-	
+
 	private int parameterCount = 0;
 	
-	private String requestMethod = "GET";
+	@Setter
+	private RequestMethod requestMethod = RequestMethod.GET;
 	
 	private String path;
 
+	@Setter
 	private String contentType;
 	
+	@Setter
 	private String apiServer;
 	
 
 	Request(String path) {
         this.path = path;
 	}
-	
-	void setRequestMethod(RequestMethod requestMethod) {
-		this.requestMethod = requestMethod.name();
-	}
-	
+
 	void addParameter(String key, String[] values) {
 		path += ((parameterCount == 0) ? "?" : "&")
 			+ key + "=" + values[0];
@@ -78,18 +80,6 @@ class Request {
 		parameterCount++;
 	}
 	
-	void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
-
-	void setApiServer(String apiServer) {
-		this.apiServer = apiServer;
-	}
-	
-	void setAccessToken(String accessToken) {
-		this.accessToken = accessToken;
-	}
-	
 	HttpURLConnection getConnection() throws IOException {
 		String URL;
 		
@@ -111,7 +101,7 @@ class Request {
 			connection.setRequestProperty("Content-Type", contentType);
 		}
 		
-		connection.setRequestMethod(requestMethod);
+		connection.setRequestMethod(requestMethod.name());
 			
 		return connection;
 	}
